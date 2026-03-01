@@ -1,0 +1,141 @@
+---
+id: comms-platform-api
+title: "Comms Platform API"
+description: "The **Comms Platform API** provides a unified interface for delivering communications"
+sidebar_label: Introduction
+sidebar_position: 0
+hide_title: true
+custom_edit_url: null
+---
+
+import ApiLogo from "@theme/ApiLogo";
+import Heading from "@theme/Heading";
+import SchemaTabs from "@theme/SchemaTabs";
+import TabItem from "@theme/TabItem";
+import Export from "@theme/ApiExplorer/Export";
+
+<span
+  className={"theme-doc-version-badge badge badge--secondary"}
+  children={"Version: 1.0.0"}
+>
+</span>
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Comms Platform API"}
+>
+</Heading>
+
+
+
+The **Comms Platform API** provides a unified interface for delivering communications
+across multiple channels — email, SMS, push notifications, and documents (both digital
+and postal).
+
+## Key Concepts
+
+### Channels
+| Channel | Description |
+|---|---|
+| `email` | Transactional and marketing emails |
+| `sms` | SMS to mobile devices |
+| `push` | Mobile push notifications |
+| `document_digital` | PDFs delivered via secure online portal |
+| `document_postal` | Physical mail to a postal address |
+| `auto` | Smart routing — platform picks the best channel |
+
+### Recipient Identification
+Recipients can be identified in two ways:
+- **Known parties** — identified by a `partyId`. Contact details and channel preferences
+  are resolved automatically from the party profile.
+- **Unknown parties** — contact details supplied directly in the request (e.g. an email
+  address or phone number). No party record is required.
+
+### Smart Routing
+Set `channel: auto` to let the platform determine the optimal delivery channel based
+on the recipient's stored preferences and available contact details.
+
+### Idempotency
+Supply an `idempotencyKey` in `metadata` to safely retry requests without risk of
+duplicate sends.
+
+## Base URL
+All endpoints are relative to `https://api.comms.example.com`.
+
+## Authentication
+All requests require a Bearer token in the `Authorization` header:
+```
+Authorization: Bearer <your-token>
+```
+
+
+<div
+  style={{"marginBottom":"2rem"}}
+>
+  <Heading
+    id={"authentication"}
+    as={"h2"}
+    className={"openapi-tabs__heading"}
+    children={"Authentication"}
+  >
+  </Heading><SchemaTabs
+    className={"openapi-tabs__security-schemes"}
+  >
+    <TabItem
+      label={"HTTP: Bearer Auth"}
+      value={"bearerAuth"}
+    >
+      
+      
+      Obtain a token from your account settings or via the token endpoint.
+      Tokens expire after 24 hours.
+      
+      
+      <div>
+        <table>
+          <tbody>
+            <tr>
+              <th>
+                Security Scheme Type:
+              </th><td>
+                http
+              </td>
+            </tr><tr>
+              <th>
+                HTTP Authorization Scheme:
+              </th><td>
+                bearer
+              </td>
+            </tr><tr>
+              <th>
+                Bearer format:
+              </th><td>
+                JWT
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </TabItem>
+  </SchemaTabs>
+</div><div
+  style={{"display":"flex","flexDirection":"column","marginBottom":"var(--ifm-paragraph-margin-bottom)"}}
+>
+  <h3
+    style={{"marginBottom":"0.25rem"}}
+  >
+    Contact
+  </h3><span>
+    Comms Platform Team: [comms-platform@example.com](mailto:comms-platform@example.com)
+  </span>
+</div><div
+  style={{"marginBottom":"var(--ifm-paragraph-margin-bottom)"}}
+>
+  <h3
+    style={{"marginBottom":"0.25rem"}}
+  >
+    License
+  </h3>
+</div>
+      

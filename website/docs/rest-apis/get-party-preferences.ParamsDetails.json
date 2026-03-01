@@ -1,0 +1,1 @@
+{"parameters":[{"name":"partyId","in":"path","required":true,"description":"Internal party identifier","schema":{"type":"string"},"example":"party-123"}]}

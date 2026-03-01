@@ -1,0 +1,941 @@
+openapi: 3.0.3
+info:
+  title: Comms Platform API
+  description: |
+    The **Comms Platform API** provides a unified interface for delivering communications
+    across multiple channels — email, SMS, push notifications, and documents (both digital
+    and postal).
+
+    ## Key Concepts
+
+    ### Channels
+    | Channel | Description |
+    |---|---|
+    | `email` | Transactional and marketing emails |
+    | `sms` | SMS to mobile devices |
+    | `push` | Mobile push notifications |
+    | `document_digital` | PDFs delivered via secure online portal |
+    | `document_postal` | Physical mail to a postal address |
+    | `auto` | Smart routing — platform picks the best channel |
+
+    ### Recipient Identification
+    Recipients can be identified in two ways:
+    - **Known parties** — identified by a `partyId`. Contact details and channel preferences
+      are resolved automatically from the party profile.
+    - **Unknown parties** — contact details supplied directly in the request (e.g. an email
+      address or phone number). No party record is required.
+
+    ### Smart Routing
+    Set `channel: auto` to let the platform determine the optimal delivery channel based
+    on the recipient's stored preferences and available contact details.
+
+    ### Idempotency
+    Supply an `idempotencyKey` in `metadata` to safely retry requests without risk of
+    duplicate sends.
+
+    ## Base URL
+    All endpoints are relative to `https://api.comms.example.com`.
+
+    ## Authentication
+    All requests require a Bearer token in the `Authorization` header:
+    ```
+    Authorization: Bearer <your-token>
+    ```
+
+  version: 1.0.0
+  contact:
+    name: Comms Platform Team
+    email: comms-platform@example.com
+  license:
+    name: Internal Use Only
+
+servers:
+  - url: https://api.comms.example.com
+    description: Production
+  - url: https://api.sandbox.comms.example.com
+    description: Sandbox
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Messages
+    description: |
+      Send and track communications across all channels. Use `channel: auto` to enable
+      smart routing, or specify a channel directly.
+  - name: Templates
+    description: |
+      Read-only access to message templates. Templates are managed as configuration and
+      deployed through your environment pipeline — they are not created or modified via
+      the API. Use these endpoints to inspect available templates and their variable
+      schemas before sending messages.
+  - name: Preferences
+    description: |
+      Manage customer communication preferences including preferred channels, opt-outs,
+      and stored contact details for known parties.
+
+paths:
+  /v1/messages:
+    post:
+      tags: [Messages]
+      summary: Send a message
+      description: |
+        Send a communication to a recipient. The `channel` field controls delivery:
+
+        - Specify a channel (e.g. `email`, `sms`) to send directly to that channel.
+        - Use `channel: auto` to trigger smart routing — the platform resolves the best
+          channel based on the recipient's preferences.
+
+        Recipients are identified either by `partyId` (for known customers) or by
+        providing `contactDetails` directly (for unknown parties).
+
+        A `202 Accepted` response means the message has been accepted and queued —
+        not necessarily delivered. Poll `GET /v1/messages/{messageId}` or subscribe
+        to Kafka events for delivery confirmation.
+      operationId: sendMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageRequest'
+            examples:
+              emailKnownParty:
+                summary: Email to known customer (by partyId)
+                value:
+                  channel: email
+                  recipient:
+                    partyId: "party-123"
+                  content:
+                    templateId: "tmpl-welcome-email"
+                    variables:
+                      firstName: "Jane"
+                      accountNumber: "ACC-456"
+              smsUnknownParty:
+                summary: SMS to unknown party (contact details provided)
+                value:
+                  channel: sms
+                  recipient:
+                    contactDetails:
+                      name: "John Smith"
+                      phone: "+447700900123"
+                  content:
+                    templateId: "tmpl-otp-sms"
+                    variables:
+                      otpCode: "847291"
+              autoRoutedMessage:
+                summary: Smart-routed message (auto channel selection)
+                value:
+                  channel: auto
+                  recipient:
+                    partyId: "party-789"
+                  content:
+                    templateId: "tmpl-account-update"
+                    variables:
+                      balanceDue: "£150.00"
+                      dueDate: "2024-02-15"
+                  metadata:
+                    priority: high
+                    idempotencyKey: "req-abc-12345"
+                    tags: ["account-notifications"]
+              postalDocument:
+                summary: Postal document to known customer
+                value:
+                  channel: document_postal
+                  recipient:
+                    partyId: "party-456"
+                  content:
+                    templateId: "tmpl-annual-statement"
+                    variables:
+                      year: "2023"
+                      totalValue: "£12,450.00"
+              pushNotification:
+                summary: Push notification with inline body
+                value:
+                  channel: push
+                  recipient:
+                    partyId: "party-321"
+                  content:
+                    subject: "Payment received"
+                    body: "We've received your payment of £250. Thank you!"
+                  metadata:
+                    priority: high
+      responses:
+        '202':
+          description: Message accepted for delivery
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                messageId: "msg-9a3f2c1d"
+                channel: email
+                status: accepted
+                recipient:
+                  partyId: "party-123"
+                createdAt: "2024-01-15T10:30:00Z"
+                updatedAt: "2024-01-15T10:30:00Z"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+
+    get:
+      tags: [Messages]
+      summary: List messages
+      description: |
+        Retrieve a paginated list of messages with optional filters.
+        Results are ordered by `createdAt` descending (most recent first).
+      operationId: listMessages
+      parameters:
+        - name: status
+          in: query
+          description: Filter by message status
+          schema:
+            $ref: '#/components/schemas/MessageStatus'
+        - name: channel
+          in: query
+          description: Filter by channel
+          schema:
+            $ref: '#/components/schemas/Channel'
+        - name: partyId
+          in: query
+          description: Filter messages for a specific party
+          schema:
+            type: string
+          example: party-123
+        - name: from
+          in: query
+          description: Filter messages created at or after this datetime (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+          example: "2024-01-01T00:00:00Z"
+        - name: to
+          in: query
+          description: Filter messages created at or before this datetime (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+          example: "2024-01-31T23:59:59Z"
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Paginated list of messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /v1/messages/{messageId}:
+    get:
+      tags: [Messages]
+      summary: Get message status
+      description: |
+        Retrieve the current status and details of a specific message.
+
+        Poll this endpoint to track delivery progress, or subscribe to Kafka events
+        for real-time status updates (see **Event-Driven Architecture**).
+      operationId: getMessage
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          description: Unique message identifier
+          schema:
+            type: string
+          example: msg-9a3f2c1d
+      responses:
+        '200':
+          description: Message details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                messageId: "msg-9a3f2c1d"
+                channel: email
+                status: delivered
+                recipient:
+                  partyId: "party-123"
+                content:
+                  templateId: "tmpl-welcome-email"
+                  variables:
+                    firstName: "Jane"
+                    accountNumber: "ACC-456"
+                metadata:
+                  priority: normal
+                  idempotencyKey: "req-abc-12345"
+                createdAt: "2024-01-15T10:30:00Z"
+                updatedAt: "2024-01-15T10:30:12Z"
+                deliveredAt: "2024-01-15T10:30:12Z"
+                providerMessageId: "01020195abc2def3-4567-89ab-cdef"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/templates:
+    get:
+      tags: [Templates]
+      summary: List templates
+      description: Retrieve a paginated list of templates, optionally filtered by channel.
+      operationId: listTemplates
+      parameters:
+        - name: channel
+          in: query
+          description: Filter by channel
+          schema:
+            $ref: '#/components/schemas/Channel'
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: Paginated list of templates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemplateListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /v1/templates/{templateId}:
+    get:
+      tags: [Templates]
+      summary: Get a template
+      operationId: getTemplate
+      parameters:
+        - name: templateId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: tmpl-abc-123
+      responses:
+        '200':
+          description: Template details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/parties/{partyId}/preferences:
+    get:
+      tags: [Preferences]
+      summary: Get communication preferences
+      description: |
+        Retrieve a known party's communication channel preferences, opt-out status,
+        and stored contact details.
+
+        The platform uses these preferences when resolving recipients by `partyId`
+        and when performing smart routing (`channel: auto`).
+      operationId: getPartyPreferences
+      parameters:
+        - name: partyId
+          in: path
+          required: true
+          description: Internal party identifier
+          schema:
+            type: string
+          example: party-123
+      responses:
+        '200':
+          description: Party preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartyPreferences'
+              example:
+                partyId: "party-123"
+                preferredChannel: email
+                optedOut: false
+                channelOptOuts: []
+                contactDetails:
+                  name: "Jane Smith"
+                  email: "jane.smith@example.com"
+                  phone: "+447700900123"
+                  address:
+                    line1: "10 Example Street"
+                    city: "London"
+                    postcode: "EC1A 1BB"
+                    country: "GB"
+                updatedAt: "2024-01-10T09:00:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags: [Preferences]
+      summary: Update communication preferences
+      description: |
+        Update a party's communication preferences. This is a full replacement —
+        omitted fields are cleared.
+
+        Use `optedOut: true` to globally suppress all communications for a party.
+        Use `channelOptOuts` to suppress specific channels while allowing others.
+      operationId: updatePartyPreferences
+      parameters:
+        - name: partyId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: party-123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartyPreferencesRequest'
+            examples:
+              setPreferredChannel:
+                summary: Set preferred channel to SMS
+                value:
+                  preferredChannel: sms
+                  channelOptOuts: [document_postal]
+                  contactDetails:
+                    name: "Jane Smith"
+                    email: "jane.smith@example.com"
+                    phone: "+447700900123"
+              optOutAll:
+                summary: Global opt-out
+                value:
+                  optedOut: true
+      responses:
+        '200':
+          description: Preferences updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartyPreferences'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Obtain a token from your account settings or via the token endpoint.
+        Tokens expire after 24 hours.
+
+  schemas:
+    Channel:
+      type: string
+      enum:
+        - email
+        - sms
+        - push
+        - document_digital
+        - document_postal
+        - auto
+      description: |
+        Communication channel:
+        - `email` — Transactional/marketing email
+        - `sms` — SMS to mobile
+        - `push` — Mobile push notification
+        - `document_digital` — PDF via secure online portal
+        - `document_postal` — Physical postal mail
+        - `auto` — Smart routing (platform selects optimal channel)
+      example: email
+
+    MessageStatus:
+      type: string
+      enum:
+        - accepted
+        - queued
+        - sending
+        - sent
+        - delivered
+        - failed
+        - bounced
+      description: |
+        Lifecycle status of a message:
+        - `accepted` — Request received and validated
+        - `queued` — Queued to downstream provider
+        - `sending` — Submitted to provider, awaiting acknowledgement
+        - `sent` — Provider accepted the message
+        - `delivered` — Confirmed delivery to recipient
+        - `failed` — Delivery failed (see `failureReason`)
+        - `bounced` — Email bounced (hard or soft)
+
+    RecipientByPartyId:
+      type: object
+      description: Recipient identified by internal party reference
+      required: [partyId]
+      properties:
+        partyId:
+          type: string
+          description: Internal party identifier. Contact details and preferences are resolved automatically.
+          example: party-123
+
+    RecipientByContactDetails:
+      type: object
+      description: Recipient identified by direct contact details (unknown party)
+      required: [contactDetails]
+      properties:
+        contactDetails:
+          $ref: '#/components/schemas/ContactDetails'
+
+    Recipient:
+      description: |
+        The message recipient. Provide either `partyId` (known customer) or
+        `contactDetails` (unknown party) — not both.
+      oneOf:
+        - $ref: '#/components/schemas/RecipientByPartyId'
+        - $ref: '#/components/schemas/RecipientByContactDetails'
+      discriminator:
+        propertyName: partyId
+
+    ContactDetails:
+      type: object
+      description: Direct contact information for an unknown party
+      properties:
+        name:
+          type: string
+          description: Recipient's display name
+          example: Jane Smith
+        email:
+          type: string
+          format: email
+          description: Email address (required for email channel)
+          example: jane.smith@example.com
+        phone:
+          type: string
+          description: Phone number in E.164 format (required for sms/push channels)
+          example: "+447700900123"
+        address:
+          $ref: '#/components/schemas/PostalAddress'
+
+    PostalAddress:
+      type: object
+      description: Postal address (required for document_postal channel)
+      required: [line1, city, postcode]
+      properties:
+        line1:
+          type: string
+          example: 10 Example Street
+        line2:
+          type: string
+          example: Flat 4
+        city:
+          type: string
+          example: London
+        county:
+          type: string
+          example: Greater London
+        postcode:
+          type: string
+          example: EC1A 1BB
+        country:
+          type: string
+          description: ISO 3166-1 alpha-2 country code
+          default: GB
+          example: GB
+
+    MessageContent:
+      type: object
+      description: |
+        Message content. Provide either `templateId` (recommended) or an inline `body`.
+        Template variables are substituted using Handlebars syntax.
+      properties:
+        templateId:
+          type: string
+          description: ID of a pre-defined template
+          example: tmpl-welcome-email
+        variables:
+          type: object
+          additionalProperties:
+            type: string
+          description: Values to substitute into template variables
+          example:
+            firstName: Jane
+            accountNumber: ACC-456
+        subject:
+          type: string
+          description: Email subject line. Overrides the template subject if provided.
+          example: Your account statement is ready
+        body:
+          type: string
+          description: Inline message body (plain text). Used when no template is specified.
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+
+    Attachment:
+      type: object
+      required: [filename, contentType, url]
+      properties:
+        filename:
+          type: string
+          example: statement-jan-2024.pdf
+        contentType:
+          type: string
+          example: application/pdf
+        url:
+          type: string
+          format: uri
+          description: Pre-signed URL to the attachment content (valid for at least 1 hour)
+          example: https://storage.example.com/attachments/stmt-abc123.pdf
+
+    MessageMetadata:
+      type: object
+      properties:
+        priority:
+          type: string
+          enum: [high, normal, low]
+          default: normal
+          description: |
+            Delivery priority. `high` priority messages skip standard queuing and are
+            dispatched immediately (subject to rate limits).
+        idempotencyKey:
+          type: string
+          description: |
+            Client-supplied key to prevent duplicate sends. If a message with this key
+            was already accepted within the last 24 hours, the original response is returned
+            without re-sending.
+          example: req-abc-12345
+        scheduledAt:
+          type: string
+          format: date-time
+          description: Schedule the message for future delivery (ISO 8601). Must be in the future.
+          example: "2024-02-01T09:00:00Z"
+        tags:
+          type: array
+          items:
+            type: string
+          description: Custom labels for filtering and reporting
+          example: [account-notifications, q1-2024]
+        correlationId:
+          type: string
+          description: Caller-supplied ID for tracing across systems. Echoed back in all events.
+          example: corr-xyz-789
+
+    MessageRequest:
+      type: object
+      required: [channel, recipient, content]
+      properties:
+        channel:
+          $ref: '#/components/schemas/Channel'
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        content:
+          $ref: '#/components/schemas/MessageContent'
+        metadata:
+          $ref: '#/components/schemas/MessageMetadata'
+
+    MessageResponse:
+      type: object
+      properties:
+        messageId:
+          type: string
+          description: Unique message identifier assigned by the platform
+          example: msg-9a3f2c1d
+        channel:
+          $ref: '#/components/schemas/Channel'
+        status:
+          $ref: '#/components/schemas/MessageStatus'
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        content:
+          $ref: '#/components/schemas/MessageContent'
+        metadata:
+          $ref: '#/components/schemas/MessageMetadata'
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:05Z"
+        deliveredAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp of confirmed delivery. Null until delivered.
+          example: "2024-01-15T10:30:12Z"
+        failureReason:
+          type: string
+          nullable: true
+          description: Human-readable reason for failure. Null unless status is `failed` or `bounced`.
+          example: null
+        providerMessageId:
+          type: string
+          nullable: true
+          description: Message identifier assigned by the downstream provider (e.g. AWS SES message ID)
+          example: "01020195abc2def3-4567-89ab-cdef"
+
+    MessageListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageResponse'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    TemplateContent:
+      type: object
+      description: Template content definition. Supports Handlebars syntax (`{{variableName}}`).
+      properties:
+        subject:
+          type: string
+          description: Email subject line (email channel only). Supports variable substitution.
+          example: "Welcome to Comms Platform, {{firstName}}!"
+        body:
+          type: string
+          description: Plain text message body
+          example: "Dear {{firstName}}, your account {{accountNumber}} is now active."
+        htmlBody:
+          type: string
+          description: HTML email body (email channel only). Takes precedence over `body` for HTML-capable clients.
+
+    TemplateVariable:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          description: Variable name used in template (without `{{` `}}`)
+          example: firstName
+        description:
+          type: string
+          example: "Customer's first name"
+        required:
+          type: boolean
+          default: false
+          description: If true, message send will fail if this variable is not provided
+        example:
+          type: string
+          description: Example value shown in documentation
+          example: Jane
+
+    TemplateRequest:
+      type: object
+      required: [name, channel, content]
+      properties:
+        name:
+          type: string
+          example: Welcome Email
+        description:
+          type: string
+          example: Sent to new customers on account creation
+        channel:
+          $ref: '#/components/schemas/Channel'
+        content:
+          $ref: '#/components/schemas/TemplateContent'
+        variables:
+          type: array
+          items:
+            $ref: '#/components/schemas/TemplateVariable'
+          description: Declared template variables. Used for validation and documentation.
+
+    Template:
+      allOf:
+        - $ref: '#/components/schemas/TemplateRequest'
+        - type: object
+          properties:
+            templateId:
+              type: string
+              readOnly: true
+              example: tmpl-abc-123
+            version:
+              type: integer
+              readOnly: true
+              description: Incremented on each update
+              example: 3
+            createdAt:
+              type: string
+              format: date-time
+              readOnly: true
+            updatedAt:
+              type: string
+              format: date-time
+              readOnly: true
+
+    TemplateListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Template'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    PartyPreferencesRequest:
+      type: object
+      properties:
+        preferredChannel:
+          $ref: '#/components/schemas/Channel'
+        optedOut:
+          type: boolean
+          description: |
+            Global opt-out flag. When `true`, no communications will be sent to this
+            party regardless of channel.
+          default: false
+        channelOptOuts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Channel'
+          description: Individual channels the party has opted out of
+          example: [document_postal]
+        contactDetails:
+          $ref: '#/components/schemas/ContactDetails'
+
+    PartyPreferences:
+      allOf:
+        - $ref: '#/components/schemas/PartyPreferencesRequest'
+        - type: object
+          properties:
+            partyId:
+              type: string
+              readOnly: true
+              example: party-123
+            updatedAt:
+              type: string
+              format: date-time
+              readOnly: true
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        pageSize:
+          type: integer
+          example: 20
+        totalItems:
+          type: integer
+          example: 143
+        totalPages:
+          type: integer
+          example: 8
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code
+          example: VALIDATION_ERROR
+        message:
+          type: string
+          description: Human-readable error summary
+          example: Request validation failed
+        details:
+          type: array
+          description: Field-level validation errors
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: channel
+              message:
+                type: string
+                example: "Must be one of: email, sms, push, document_digital, document_postal, auto"
+
+  responses:
+    BadRequest:
+      description: Invalid request — check `details` for field-level errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: VALIDATION_ERROR
+            message: Request validation failed
+            details:
+              - field: channel
+                message: "Must be one of: email, sms, push, document_digital, document_postal, auto"
+
+    Unauthorized:
+      description: Missing or invalid Bearer token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: UNAUTHORIZED
+            message: Invalid or missing Bearer token
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: NOT_FOUND
+            message: The requested resource was not found
+
+    UnprocessableEntity:
+      description: Business rule violation — the request is valid but cannot be processed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            partyOptedOut:
+              summary: Party has opted out of communications
+              value:
+                code: PARTY_OPTED_OUT
+                message: The recipient has opted out of all communications
+            channelOptedOut:
+              summary: Party has opted out of this channel
+              value:
+                code: CHANNEL_OPTED_OUT
+                message: The recipient has opted out of email communications
+            noContactDetails:
+              summary: Cannot resolve contact details for channel
+              value:
+                code: NO_CONTACT_DETAILS
+                message: Unable to resolve an email address for party-123. Provide contactDetails or update party preferences.
+            templateVariablesMissing:
+              summary: Required template variable not provided
+              value:
+                code: MISSING_TEMPLATE_VARIABLES
+                message: Required variable 'firstName' not provided for template tmpl-welcome-email

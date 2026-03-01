@@ -1,0 +1,1 @@
+{"parameters":[{"name":"messageId","in":"path","required":true,"description":"Unique message identifier","schema":{"type":"string"},"example":"msg-9a3f2c1d"}]}

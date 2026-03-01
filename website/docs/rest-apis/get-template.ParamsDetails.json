@@ -1,0 +1,1 @@
+{"parameters":[{"name":"templateId","in":"path","required":true,"schema":{"type":"string"},"example":"tmpl-abc-123"}]}

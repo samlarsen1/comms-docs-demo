@@ -1,0 +1,111 @@
+/**
+ * Comms Platform — Custom Theme
+ * Based on Infima CSS framework (bundled with Docusaurus)
+ */
+
+/* ─── Brand Colours ─────────────────────────────────────────────────── */
+:root {
+  /* Indigo-blue brand palette */
+  --ifm-color-primary: #4361ee;
+  --ifm-color-primary-dark: #2849eb;
+  --ifm-color-primary-darker: #1b3de9;
+  --ifm-color-primary-darkest: #1230c3;
+  --ifm-color-primary-light: #5e79f1;
+  --ifm-color-primary-lighter: #6b85f2;
+  --ifm-color-primary-lightest: #90a2f6;
+
+  --ifm-code-font-size: 93%;
+  --ifm-font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
+  --ifm-heading-font-weight: 600;
+  --docusaurus-highlighted-code-line-bg: rgba(67, 97, 238, 0.08);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #818cf8;
+  --ifm-color-primary-dark: #6b75f6;
+  --ifm-color-primary-darker: #5d68f5;
+  --ifm-color-primary-darkest: #3344f2;
+  --ifm-color-primary-light: #97a0fa;
+  --ifm-color-primary-lighter: #a5adfb;
+  --ifm-color-primary-lightest: #c7ccfd;
+
+  --docusaurus-highlighted-code-line-bg: rgba(129, 140, 248, 0.12);
+}
+
+/* ─── Navbar ─────────────────────────────────────────────────────────── */
+.navbar__title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+}
+
+/* ─── API Method Badges in Sidebar ──────────────────────────────────── */
+.api-method > .menu__link::before {
+  width: 50px;
+  height: 20px;
+  font-size: 11px;
+  line-height: 20px;
+  text-transform: uppercase;
+  font-weight: 600;
+  border-radius: 4px;
+  margin-right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.api-method.get > .menu__link::before {
+  content: 'GET';
+  background-color: #e3f2fd;
+  color: #0075ca;
+}
+
+.api-method.post > .menu__link::before {
+  content: 'POST';
+  background-color: #e8f5e9;
+  color: #00aa55;
+}
+
+.api-method.put > .menu__link::before {
+  content: 'PUT';
+  background-color: #fff3e0;
+  color: #e36209;
+}
+
+.api-method.delete > .menu__link::before {
+  content: 'DEL';
+  background-color: #fce4ec;
+  color: #d73a49;
+}
+
+[data-theme='dark'] .api-method.get > .menu__link::before {
+  background-color: rgba(0, 117, 202, 0.2);
+  color: #79b8ff;
+}
+
+[data-theme='dark'] .api-method.post > .menu__link::before {
+  background-color: rgba(0, 170, 85, 0.2);
+  color: #85e89d;
+}
+
+[data-theme='dark'] .api-method.put > .menu__link::before {
+  background-color: rgba(227, 98, 9, 0.2);
+  color: #ffab70;
+}
+
+[data-theme='dark'] .api-method.delete > .menu__link::before {
+  background-color: rgba(215, 58, 73, 0.2);
+  color: #f97583;
+}
+
+/* ─── Code Blocks ────────────────────────────────────────────────────── */
+.prism-code {
+  border-radius: 8px;
+}
+
+/* ─── Table of Contents ──────────────────────────────────────────────── */
+.table-of-contents__link--active,
+.table-of-contents__link:hover {
+  color: var(--ifm-color-primary);
+}
