@@ -1,0 +1,52 @@
+---
+id: com-bank-schemas-common-enums-interestratetype
+title: InterestRateType
+description: "Classification of interest rate structure. Aligned with UK Open Banking OBInterestRateType1Code."
+tags: [InterestRateType, v1.0.0, Common Enums]
+---
+
+# InterestRateType
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.common.enums` |
+| **Type** | `enum` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/common/enums/InterestRateType.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/common/enums/InterestRateType.avsc) |
+
+Classification of interest rate structure. Aligned with UK Open Banking OBInterestRateType1Code.
+
+## Symbols
+
+| Symbol |
+|--------|
+| `LINKED_BASE_RATE` |
+| `GROSS` |
+| `NET` |
+| `AER` |
+| `APR` |
+| `FIXED` |
+| `VARIABLE` |
+| `TRACKER` |
+| `DISCOUNT` |
+| `CAPPED` |
+| `STEPPED` |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [InterestCharge](./core/InterestCharge) | `com.bank.schemas.core` |
+| [InterestRate](./core/InterestRate) | `com.bank.schemas.core` |
+| [InterestRateChangeEmailPayload](./payloads/emails/InterestRateChangeEmailPayload) | `com.bank.schemas.payloads.emails` |
+| [InterestRateChangeLetterPayload](./payloads/letters/InterestRateChangeLetterPayload) | `com.bank.schemas.payloads.letters` |
+| [LoanStatementPayload](./payloads/statements/LoanStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [MortgageStatementPayload](./payloads/statements/MortgageStatementPayload) | `com.bank.schemas.payloads.statements` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

@@ -1,0 +1,45 @@
+---
+id: com-bank-schemas-core-fees
+title: Fees
+description: "Fee definition applicable to a product. Aligned with UK Open Banking OBFeeChargeDetail1 and extended for commercial and investment products."
+tags: [Fees, v1.0.0, Core Entities]
+---
+
+# Fees
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.core` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/core/Fees.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/core/Fees.avsc) |
+
+Fee definition applicable to a product. Aligned with UK Open Banking OBFeeChargeDetail1 and extended for commercial and investment products.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `feeId` | `string` | Yes | — | Unique identifier for this fee definition. |
+| `productId` | `string` | Yes | — | Reference to the Product this fee applies to. |
+| `feeType` | [`FeeType`](./common/enums/FeeType) | Yes | — | Classification of this fee. |
+| `feeCategory` | `FeeCategory` _(inline enum)_ | Yes | — | High-level category of the fee. |
+| `name` | `string` | Yes | — | Display name of the fee. |
+| `description` | `string` _(optional)_ | No | `null` | Detailed description of when and how this fee is applied. |
+| `fixedAmount` | [`Money`](./common/Money) _(optional)_ | No | `null` | Fixed fee amount. Null for percentage-based fees. |
+| `ratePercent` | `string` _(optional)_ | No | `null` | Fee as a percentage of the transaction or balance, e.g. '2.5'. Null for fixed-amount fees. |
+| `minimumAmount` | [`Money`](./common/Money) _(optional)_ | No | `null` | Minimum fee amount when using a percentage rate. |
+| `maximumAmount` | [`Money`](./common/Money) _(optional)_ | No | `null` | Maximum fee amount when using a percentage rate. |
+| `calculationFrequency` | [`StatementFrequency`](./common/enums/StatementFrequency) _(optional)_ | No | `null` | How frequently the fee is calculated. |
+| `applicationFrequency` | [`StatementFrequency`](./common/enums/StatementFrequency) _(optional)_ | No | `null` | How frequently the fee is charged to the account. |
+| `feeNotes` | `string` _(optional)_ | No | `null` | Additional notes or conditions applicable to this fee. |
+| `effectiveFrom` | `string` | Yes | — | ISO 8601 date from which this fee definition is effective: YYYY-MM-DD. |
+| `effectiveTo` | `string` _(optional)_ | No | `null` | ISO 8601 date after which this fee definition is no longer effective. Null if open-ended. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

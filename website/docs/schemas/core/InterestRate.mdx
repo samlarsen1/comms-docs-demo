@@ -1,0 +1,65 @@
+---
+id: com-bank-schemas-core-interestrate
+title: InterestRate
+description: "Interest rate definition applicable to a product or account. Supports tiered, fixed, variable, and tracker rates. Aligned with UK Open Banking OBInterestRateType1Code and CMA Open Banking remedies. Rates are represented as decimal strings to avoid floating point issues."
+tags: [InterestRate, v1.0.0, Core Entities]
+---
+
+# InterestRate
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.core` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/core/InterestRate.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/core/InterestRate.avsc) |
+
+Interest rate definition applicable to a product or account. Supports tiered, fixed, variable, and tracker rates. Aligned with UK Open Banking OBInterestRateType1Code and CMA Open Banking remedies. Rates are represented as decimal strings to avoid floating point issues.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `rateId` | `string` | Yes | — | Unique identifier for this interest rate definition. |
+| `productId` | `string` | Yes | — | Reference to the Product this rate applies to. |
+| `accountId` | `string` _(optional)_ | No | `null` | Reference to a specific Account if this is an account-level rate override. Null if product-level. |
+| `rateType` | [`InterestRateType`](./common/enums/InterestRateType) | Yes | — | The structure of the interest rate. |
+| `direction` | `InterestDirection` _(inline enum)_ | Yes | — | Whether this rate is for interest earned (CREDIT) or interest charged (DEBIT). |
+| `nominalRatePercent` | `string` | Yes | — | Annual nominal interest rate as a decimal string, e.g. '3.75'. |
+| `aer` | `string` _(optional)_ | No | `null` | Annual Equivalent Rate as a decimal string, accounting for compounding. |
+| `apr` | `string` _(optional)_ | No | `null` | Annual Percentage Rate as a decimal string, for borrowing products including all costs. |
+| `baseRate` | `BaseRateReference` _(inline record)_ _(optional)_ | No | `null` | Reference rate details for variable or tracker rates. |
+| `tier` | `RateTier` _(inline record)_ _(optional)_ | No | `null` | Tier boundaries if this is a tiered rate structure. |
+| `calculationMethod` | `InterestCalculationMethod` _(inline enum)_ | No | `"DAILY_BALANCE"` | Method used to calculate interest. |
+| `conditions` | `string` _(optional)_ | No | `null` | Human-readable conditions or eligibility criteria for this rate. |
+| `effectiveFrom` | `string` | Yes | — | ISO 8601 date from which this rate is effective. |
+| `effectiveTo` | `string` _(optional)_ | No | `null` | ISO 8601 date after which this rate is no longer effective. Null if open-ended. |
+
+## Nested Types
+
+### BaseRateReference {#baseratereference}
+
+Reference rate used for tracker or variable rates.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `rateName` | `string` | Yes | — | Name of the reference rate, e.g. 'Bank of England Base Rate', 'SONIA', 'LIBOR'. |
+| `spreadPercent` | `string` | Yes | — | Percentage spread above or below the base rate, e.g. '1.5' or '-0.25'. |
+| `currentBaseRatePercent` | `string` _(optional)_ | No | `null` | Current value of the base rate at the time this record was created. |
+
+### RateTier {#ratetier}
+
+Balance tier for tiered interest rates.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `tierMinimum` | [`Money`](./common/Money) _(optional)_ | No | `null` | Minimum balance for this rate tier to apply. |
+| `tierMaximum` | [`Money`](./common/Money) _(optional)_ | No | `null` | Maximum balance for this rate tier. Null means no upper limit. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

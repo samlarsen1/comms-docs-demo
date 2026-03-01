@@ -1,0 +1,68 @@
+---
+id: com-bank-schemas-reference-communicationpreferences
+title: CommunicationPreferences
+description: "Customer communication preferences determining channel selection for each event type and product. Inspired by Brazil Open Finance Consentimento (consent) and Notificacoes (notification preferences) structures. The AUTO channel dispatcher consults this record when resolving which channels to attempt and in which order."
+tags: [CommunicationPreferences, v1.0.0, Reference]
+---
+
+# CommunicationPreferences
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.reference` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/reference/CommunicationPreferences.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/reference/CommunicationPreferences.avsc) |
+
+Customer communication preferences determining channel selection for each event type and product. Inspired by Brazil Open Finance Consentimento (consent) and Notificacoes (notification preferences) structures. The AUTO channel dispatcher consults this record when resolving which channels to attempt and in which order.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `preferencesId` | `string` | Yes | — | Unique identifier for this preferences record. |
+| `partyId` | `string` | Yes | — | Reference to the Party whose preferences these are. |
+| `version` | `int` | No | `1` | Version number incremented on each update to support audit and optimistic locking. |
+| `globalOptOut` | `boolean` | No | `false` | If true, the customer has opted out of all non-mandatory communications. Regulatory, legal, and security communications are still delivered regardless. |
+| `channelConsents` | array of `ChannelConsent` _(inline record)_ | No | `[]` | Per-channel consent records. |
+| `eventTypePreferences` | array of `EventTypePreference` _(inline record)_ | No | `[]` | Per-event-type channel preferences. |
+| `paperlessEnabled` | `boolean` | No | `false` | Whether the customer has enrolled in paperless communications. Affects statement and letter delivery preferences. |
+| `language` | `string` | No | `"en-GB"` | Preferred communication language as a BCP 47 tag, e.g. 'en-GB', 'cy-GB', 'pl-PL'. |
+| `accessibilityRequirements` | array of `string` | No | `[]` | Accessibility format requirements, e.g. 'LARGE_PRINT', 'BRAILLE', 'AUDIO'. |
+| `updatedAt` | `long` _(timestamp-millis, UTC ms)_ | Yes | — | UTC timestamp when preferences were last updated. |
+| `updatedBy` | `string` _(optional)_ | No | `null` | System or user that last updated these preferences. |
+
+## Nested Types
+
+### ChannelConsent {#channelconsent}
+
+Consent and preference for a specific delivery channel. Aligned with ePrivacy Directive and PECR requirements.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `channel` | [`ChannelType`](./common/enums/ChannelType) | Yes | — | The delivery channel this consent record applies to. Must not be AUTO. |
+| `consentGiven` | `boolean` | Yes | — | Whether the customer has given consent to receive communications via this channel. |
+| `consentDateTime` | `long` _(timestamp-millis, UTC ms)_ _(optional)_ | No | `null` | UTC timestamp when consent was given or last updated. |
+| `optOutDateTime` | `long` _(timestamp-millis, UTC ms)_ _(optional)_ | No | `null` | UTC timestamp when the customer opted out. Null if currently consented. |
+| `consentSource` | `string` _(optional)_ | No | `null` | How consent was obtained, e.g. 'ONLINE_BANKING', 'BRANCH', 'PHONE', 'APP'. |
+
+### EventTypePreference {#eventtypepreference}
+
+Customer's preferred delivery channel(s) for a specific communication event type, optionally scoped to a product type. The AUTO dispatcher uses preferredChannelOrder to determine cascade sequence.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `eventType` | [`CommunicationEventType`](./common/enums/CommunicationEventType) | Yes | — | The communication event type this preference applies to. |
+| `productType` | [`ProductType`](./common/enums/ProductType) _(optional)_ | No | `null` | Optional product type scoping. Null means this preference applies to all product types for the given event type. |
+| `accountId` | `string` _(optional)_ | No | `null` | Optional account-level scoping. Null means this preference applies across all accounts. |
+| `preferredChannelOrder` | array of [`ChannelType`](./common/enums/ChannelType) | Yes | — | Ordered list of preferred channels. The AUTO dispatcher attempts channels in this order, stopping on first successful delivery (unless configured otherwise). Must not contain AUTO. |
+| `suppressIfNoTemplate` | `boolean` | No | `true` | If true and no template exists for a preferred channel, the dispatcher moves to the next channel. If false, delivery fails if the first-choice channel has no template. |
+| `statementFormat` | `string` _(optional)_ | No | `null` | Preferred statement format for STATEMENT events, e.g. 'PAPER', 'ELECTRONIC', 'BOTH'. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

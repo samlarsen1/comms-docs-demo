@@ -1,0 +1,44 @@
+---
+id: com-bank-schemas-common-enums-accountstatus
+title: AccountStatus
+description: "Account lifecycle status aligned with UK Open Banking OBAccountStatus1Code."
+tags: [AccountStatus, v1.0.0, Common Enums]
+---
+
+# AccountStatus
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.common.enums` |
+| **Type** | `enum` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/common/enums/AccountStatus.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/common/enums/AccountStatus.avsc) |
+
+Account lifecycle status aligned with UK Open Banking OBAccountStatus1Code.
+
+## Symbols
+
+| Symbol |
+|--------|
+| `ENABLED` |
+| `DISABLED` |
+| `DELETED` |
+| `PENDING` |
+| `DORMANT` |
+| `SUSPENDED` |
+| `PENDING_CLOSURE` |
+| `CLOSED` |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [Account](./core/Account) | `com.bank.schemas.core` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

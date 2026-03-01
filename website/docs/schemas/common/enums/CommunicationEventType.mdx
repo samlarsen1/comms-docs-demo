@@ -1,0 +1,63 @@
+---
+id: com-bank-schemas-common-enums-communicationeventtype
+title: CommunicationEventType
+description: "Classifies the purpose and content of a communication event. Used to match templates, route to channels, and apply customer preferences."
+tags: [CommunicationEventType, v1.0.0, Common Enums]
+---
+
+# CommunicationEventType
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.common.enums` |
+| **Type** | `enum` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/common/enums/CommunicationEventType.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/common/enums/CommunicationEventType.avsc) |
+
+Classifies the purpose and content of a communication event. Used to match templates, route to channels, and apply customer preferences.
+
+## Symbols
+
+| Symbol |
+|--------|
+| `STATEMENT` |
+| `INTEREST_RATE_CHANGE` |
+| `PAYMENT_NOTIFICATION` |
+| `PAYMENT_RECEIVED` |
+| `PAYMENT_FAILED` |
+| `DIRECT_DEBIT_NOTIFICATION` |
+| `STANDING_ORDER_NOTIFICATION` |
+| `FRAUD_ALERT` |
+| `SUSPICIOUS_ACTIVITY_ALERT` |
+| `BANK_LETTER` |
+| `REGULATORY_NOTICE` |
+| `PRODUCT_CHANGE` |
+| `ACCOUNT_OPENING` |
+| `ACCOUNT_CLOSURE` |
+| `OVERDRAFT_NOTIFICATION` |
+| `LOW_BALANCE_ALERT` |
+| `FX_RATE_ALERT` |
+| `MARKETING` |
+| `TERMS_AND_CONDITIONS_UPDATE` |
+| `PASSWORD_RESET` |
+| `TWO_FACTOR_AUTH` |
+| `COMPLAINT_ACKNOWLEDGEMENT` |
+| `COMPLAINT_RESOLUTION` |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [AutoChannelDispatch](./channels/AutoChannelDispatch) | `com.bank.schemas.channels` |
+| [CommunicationEvent](./events/CommunicationEvent) | `com.bank.schemas.events` |
+| [CommunicationEventResponse](./events/CommunicationEventResponse) | `com.bank.schemas.events` |
+| [CommunicationPreferences](./reference/CommunicationPreferences) | `com.bank.schemas.reference` |
+| [Template](./reference/Template) | `com.bank.schemas.reference` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

@@ -1,0 +1,54 @@
+---
+id: com-bank-schemas-common-money
+title: Money
+description: "Monetary amount with ISO 4217 currency code. Amount is represented as a string to avoid floating point precision issues. Aligned with ISO 20022 ActiveOrHistoricCurrencyAndAmount."
+tags: [Money, v1.0.1, Common Types]
+---
+
+# Money
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.common` |
+| **Type** | `record` |
+| **Version** | `1.0.1` |
+| **Compatibility** | `FULL` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/common/Money.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/common/Money.avsc) |
+
+Monetary amount with ISO 4217 currency code. Amount is represented as a string to avoid floating point precision issues. Aligned with ISO 20022 ActiveOrHistoricCurrencyAndAmount.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `amount` | `string` | Yes | — | Decimal monetary amount as a string, e.g. '1234.56'. Negative values use a leading minus, e.g. '-50.00'. |
+| `currency` | `string` | Yes | — | ISO 4217 three-letter currency code, e.g. 'GBP', 'EUR', 'USD'. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [Balance](./core/Balance) | `com.bank.schemas.core` |
+| [Fees](./core/Fees) | `com.bank.schemas.core` |
+| [FxFees](./core/FxFees) | `com.bank.schemas.core` |
+| [InterestCharge](./core/InterestCharge) | `com.bank.schemas.core` |
+| [InterestRate](./core/InterestRate) | `com.bank.schemas.core` |
+| [Transaction](./core/Transaction) | `com.bank.schemas.core` |
+| [InterestRateChangeLetterPayload](./payloads/letters/InterestRateChangeLetterPayload) | `com.bank.schemas.payloads.letters` |
+| [PaymentPushNotificationPayload](./payloads/push/PaymentPushNotificationPayload) | `com.bank.schemas.payloads.push` |
+| [FraudNotificationSmsPayload](./payloads/sms/FraudNotificationSmsPayload) | `com.bank.schemas.payloads.sms` |
+| [CommercialStatementPayload](./payloads/statements/CommercialStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [CreditCardStatementPayload](./payloads/statements/CreditCardStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [CurrentAccountStatementPayload](./payloads/statements/CurrentAccountStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [InvestmentStatementPayload](./payloads/statements/InvestmentStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [LoanStatementPayload](./payloads/statements/LoanStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [MortgageStatementPayload](./payloads/statements/MortgageStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [PensionStatementPayload](./payloads/statements/PensionStatementPayload) | `com.bank.schemas.payloads.statements` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.1` | 2026-03-01 | PATCH | No | Improved doc string clarity |
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

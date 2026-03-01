@@ -1,0 +1,48 @@
+---
+id: com-bank-schemas-reference-template
+title: Template
+description: "A communication template definition describing a reusable content structure for a specific event type and channel. Templates declare which channels they support and which payload fields they require, enabling the AUTO channel to discover applicable templates at dispatch time."
+tags: [Template, v1.0.0, Reference]
+---
+
+# Template
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.reference` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/reference/Template.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/reference/Template.avsc) |
+
+A communication template definition describing a reusable content structure for a specific event type and channel. Templates declare which channels they support and which payload fields they require, enabling the AUTO channel to discover applicable templates at dispatch time.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `templateId` | `string` | Yes | — | Unique UUID identifier for this template. |
+| `templateCode` | `string` | Yes | — | Human-readable stable code for referencing this template, e.g. 'STMT_CURRENT_ACCOUNT_EMAIL_EN_GB'. Must be unique and URL-safe. |
+| `name` | `string` | Yes | — | Display name of this template. |
+| `description` | `string` _(optional)_ | No | `null` | Human-readable description of this template's purpose. |
+| `version` | `string` | Yes | — | Semantic version of this template, e.g. '1.0.0'. Increment major version for breaking payload changes. |
+| `status` | [`TemplateStatus`](./common/enums/TemplateStatus) | Yes | — | Lifecycle status of this template. |
+| `eventType` | [`CommunicationEventType`](./common/enums/CommunicationEventType) | Yes | — | The communication event type this template is designed for. |
+| `supportedChannels` | array of [`ChannelType`](./common/enums/ChannelType) | Yes | — | Channels this template is available for. The AUTO channel dispatcher uses this to identify which channels a payload can be delivered via. A template listed here must have a corresponding ChannelTemplate record for each supported channel. |
+| `supportedPayloadTypes` | array of `string` | Yes | — | Fully qualified Avro schema names of payload types this template can render, e.g. ['com.bank.schemas.payloads.statements.CurrentAccountStatementPayload']. |
+| `language` | `string` | No | `"en-GB"` | BCP 47 language tag for the template language, e.g. 'en-GB', 'cy-GB', 'pl-PL'. |
+| `requiredPayloadFields` | array of `string` | No | `[]` | List of payload field names that must be present for this template to render. Used by AUTO dispatcher to validate payload compatibility before attempting delivery. |
+| `productTypes` | array of [`ProductType`](./common/enums/ProductType) | No | `[]` | Product types this template applies to. Empty array means applicable to all product types. |
+| `metadata` | map\<string, `string`\> | No | `{}` | Arbitrary key-value metadata for template management, e.g. author, design system reference, legal approval ID. |
+| `contentSystemRef` | `string` _(optional)_ | No | `null` | Reference to the template content in the content management system (e.g. CMS template ID, S3 key). |
+| `createdAt` | `long` _(timestamp-millis, UTC ms)_ | Yes | — | UTC timestamp when this template was created. |
+| `updatedAt` | `long` _(timestamp-millis, UTC ms)_ | Yes | — | UTC timestamp when this template was last updated. |
+| `approvedAt` | `long` _(timestamp-millis, UTC ms)_ _(optional)_ | No | `null` | UTC timestamp when this template received compliance/legal approval. |
+| `approvedBy` | `string` _(optional)_ | No | `null` | Identifier of the approver (user ID or team name). |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

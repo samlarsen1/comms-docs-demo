@@ -1,0 +1,40 @@
+---
+id: com-bank-schemas-common-enums-creditdebitindicator
+title: CreditDebitIndicator
+description: "Indicates whether a monetary value represents a credit or debit. Aligned with UK Open Banking OBCreditDebitCode."
+tags: [CreditDebitIndicator, v1.0.0, Common Enums]
+---
+
+# CreditDebitIndicator
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.common.enums` |
+| **Type** | `enum` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/common/enums/CreditDebitIndicator.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/common/enums/CreditDebitIndicator.avsc) |
+
+Indicates whether a monetary value represents a credit or debit. Aligned with UK Open Banking OBCreditDebitCode.
+
+## Symbols
+
+| Symbol |
+|--------|
+| `CREDIT` |
+| `DEBIT` |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [Balance](./core/Balance) | `com.bank.schemas.core` |
+| [Transaction](./core/Transaction) | `com.bank.schemas.core` |
+| [CurrentAccountStatementPayload](./payloads/statements/CurrentAccountStatementPayload) | `com.bank.schemas.payloads.statements` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

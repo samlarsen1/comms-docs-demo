@@ -1,0 +1,74 @@
+---
+id: com-bank-schemas-payloads-statements-commercialstatementpayload
+title: CommercialStatementPayload
+description: "Payload for a commercial or business banking account statement. Covers current accounts, commercial loans, and trade finance facilities. Aligned with UK Finance commercial banking standards and Basel III reporting requirements."
+tags: [CommercialStatementPayload, v1.0.0, Payloads / Statements]
+---
+
+# CommercialStatementPayload
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.payloads.statements` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/payloads/statements/CommercialStatementPayload.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/payloads/statements/CommercialStatementPayload.avsc) |
+
+Payload for a commercial or business banking account statement. Covers current accounts, commercial loans, and trade finance facilities. Aligned with UK Finance commercial banking standards and Basel III reporting requirements.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `statementId` | `string` | Yes | — | Unique identifier for this statement. |
+| `accountId` | `string` | Yes | — | Reference to the commercial Account. |
+| `accountNumber` | `string` | Yes | — | Account number. |
+| `sortCode` | `string` _(optional)_ | No | `null` | Sort code for UK accounts. |
+| `iban` | `string` _(optional)_ | No | `null` | IBAN if available. |
+| `companyName` | `string` | Yes | — | Legal name of the business account holder. |
+| `companyRegistrationNumber` | `string` _(optional)_ | No | `null` | Companies House registration number. |
+| `productName` | `string` | Yes | — | Account product name, e.g. 'Business Current Account', 'Commercial Loan'. |
+| `productType` | [`ProductType`](./common/enums/ProductType) | Yes | — | Commercial product classification. |
+| `relationshipManagerName` | `string` _(optional)_ | No | `null` | Name of the assigned relationship manager. |
+| `relationshipManagerContact` | `string` _(optional)_ | No | `null` | Direct contact number or email for the relationship manager. |
+| `statementDate` | `string` | Yes | — | ISO 8601 date the statement was generated. |
+| `periodStartDate` | `string` | Yes | — | ISO 8601 start date of the statement period. |
+| `periodEndDate` | `string` | Yes | — | ISO 8601 end date of the statement period. |
+| `openingBalance` | [`Money`](./common/Money) | Yes | — | Account balance at the start of the statement period. |
+| `closingBalance` | [`Money`](./common/Money) | Yes | — | Account balance at the end of the statement period. |
+| `totalCredits` | [`Money`](./common/Money) | Yes | — | Total credit entries in the period. |
+| `totalDebits` | [`Money`](./common/Money) | Yes | — | Total debit entries in the period. |
+| `creditFacility` | `CommercialCreditFacility` _(inline record)_ _(optional)_ | No | `null` | Commercial credit facility details if applicable. |
+| `interestChargedThisPeriod` | [`Money`](./common/Money) _(optional)_ | No | `null` | Total interest charged during the period. |
+| `interestRatePercent` | `string` _(optional)_ | No | `null` | Interest rate applied as a decimal string. |
+| `feesChargedThisPeriod` | [`Money`](./common/Money) _(optional)_ | No | `null` | Total fees charged during the period. |
+| `transactions` | array of `com.bank.schemas.payloads.statements.StatementTransaction` | No | `[]` | Transactions during the statement period. |
+| `correspondenceAddress` | [`Address`](./common/Address) _(optional)_ | No | `null` | Address for printed statement delivery. |
+
+## Nested Types
+
+### CommercialCreditFacility {#commercialcreditfacility}
+
+Commercial credit facility details.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `facilityType` | `string` | Yes | — | Type of credit facility, e.g. 'OVERDRAFT', 'REVOLVING_CREDIT', 'TERM_LOAN', 'TRADE_FINANCE'. |
+| `facilityLimit` | [`Money`](./common/Money) | Yes | — | Total approved facility limit. |
+| `utilisedAmount` | [`Money`](./common/Money) | Yes | — | Amount of facility currently in use. |
+| `availableAmount` | [`Money`](./common/Money) | Yes | — | Amount of facility currently available. |
+| `reviewDate` | `string` _(optional)_ | No | `null` | ISO 8601 date of next facility review. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [CommunicationEvent](./events/CommunicationEvent) | `com.bank.schemas.events` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

@@ -1,0 +1,50 @@
+---
+id: com-bank-schemas-payloads-sms-fraudnotificationsmspayload
+title: FraudNotificationSmsPayload
+description: "Payload for an SMS fraud or suspicious activity alert. Delivered via SMS channel with high priority. Designed for brevity (max 160 characters per message segment). Aligned with UK Finance Fraud Code and FCA BCOBS consumer alert requirements. Must not include account numbers, card numbers, PINs, or passwords in plaintext."
+tags: [FraudNotificationSmsPayload, v1.0.0, Payloads / SMS]
+---
+
+# FraudNotificationSmsPayload
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.payloads.sms` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/payloads/sms/FraudNotificationSmsPayload.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/payloads/sms/FraudNotificationSmsPayload.avsc) |
+
+Payload for an SMS fraud or suspicious activity alert. Delivered via SMS channel with high priority. Designed for brevity (max 160 characters per message segment). Aligned with UK Finance Fraud Code and FCA BCOBS consumer alert requirements. Must not include account numbers, card numbers, PINs, or passwords in plaintext.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `notificationId` | `string` | Yes | — | Unique identifier for this fraud alert notification. |
+| `partyId` | `string` | Yes | — | Reference to the Party being notified. |
+| `accountId` | `string` | Yes | — | Reference to the Account associated with the suspicious activity. |
+| `maskedAccountNumber` | `string` _(optional)_ | No | `null` | Last 4 digits of account or card number for customer identification, e.g. '...1234'. Must not include full account details. |
+| `fraudAlertType` | `FraudAlertType` _(inline enum)_ | Yes | — | Type of fraud or suspicious activity detected. |
+| `suspiciousTransactionAmount` | [`Money`](./common/Money) _(optional)_ | No | `null` | Amount of the suspicious transaction, if applicable. |
+| `suspiciousMerchantName` | `string` _(optional)_ | No | `null` | Merchant or payee name associated with the suspicious activity. |
+| `suspiciousTransactionDateTime` | `long` _(timestamp-millis, UTC ms)_ _(optional)_ | No | `null` | UTC timestamp of the suspicious transaction. |
+| `messageBody` | `string` | Yes | — | The SMS message body. Must be concise and fit within 160 characters. Template will interpolate this text. MUST NOT contain PINs, passwords, or full account details. |
+| `referenceCode` | `string` | Yes | — | Short reference code the customer should quote when calling the bank about this alert, e.g. 'FA-123456'. |
+| `bankContactNumber` | `string` | Yes | — | Bank's fraud helpline number for the customer to call. Use the number on the back of the card where possible. |
+| `actionRequired` | `FraudActionRequired` _(inline enum)_ | Yes | — | The action the customer is asked to take. |
+| `isUrgent` | `boolean` | No | `true` | Whether this alert requires immediate action. Urgent alerts may trigger card blocks. |
+| `cardBlocked` | `boolean` | No | `false` | Whether the card or account has been blocked pending customer response. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [CommunicationEvent](./events/CommunicationEvent) | `com.bank.schemas.events` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

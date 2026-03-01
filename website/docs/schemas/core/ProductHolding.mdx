@@ -1,0 +1,38 @@
+---
+id: com-bank-schemas-core-productholding
+title: ProductHolding
+description: "Links a party to a product and account, capturing the role of the party in that relationship. Inspired by Brazil Open Finance Contas and UK Open Banking account-party association."
+tags: [ProductHolding, v1.0.0, Core Entities]
+---
+
+# ProductHolding
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.core` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/core/ProductHolding.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/core/ProductHolding.avsc) |
+
+Links a party to a product and account, capturing the role of the party in that relationship. Inspired by Brazil Open Finance Contas and UK Open Banking account-party association.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `holdingId` | `string` | Yes | — | Unique identifier for this product holding relationship. |
+| `partyId` | `string` | Yes | — | Reference to the Party who holds this product. |
+| `productId` | `string` | Yes | — | Reference to the Product definition. |
+| `accountId` | `string` | Yes | — | Reference to the Account associated with this holding. |
+| `role` | `HoldingRole` _(inline enum)_ | Yes | — | The party's role in this product relationship. |
+| `status` | `HoldingStatus` _(inline enum)_ | Yes | — | Current lifecycle status of this holding. |
+| `startDate` | `string` | Yes | — | ISO 8601 date when this holding relationship began. |
+| `endDate` | `string` _(optional)_ | No | `null` | ISO 8601 date when this holding relationship ended. Null if still active. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

@@ -1,0 +1,47 @@
+---
+id: com-bank-schemas-events-communicationeventresponse
+title: CommunicationEventResponse
+description: "Status update event produced by the communication dispatch service after attempting delivery of a CommunicationEvent. Published to response topics for consuming systems to track delivery outcomes. One response per channel attempt."
+tags: [CommunicationEventResponse, v2.0.0, Events]
+---
+
+# CommunicationEventResponse
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.events` |
+| **Type** | `record` |
+| **Version** | `2.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/events/CommunicationEventResponse.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/events/CommunicationEventResponse.avsc) |
+
+Status update event produced by the communication dispatch service after attempting delivery of a CommunicationEvent. Published to response topics for consuming systems to track delivery outcomes. One response per channel attempt.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `responseId` | `string` | Yes | — | Unique identifier for this response event. |
+| `originalEventId` | `string` | Yes | — | The eventId of the CommunicationEvent this response corresponds to. |
+| `correlationId` | `string` _(optional)_ | No | `null` | Propagated correlation ID from the original event. |
+| `workloadId` | `string` | Yes | — | Reference to the Workload from the original CommunicationEvent. Propagated to the response to enable workload-level delivery tracking and SLA reporting. |
+| `partyId` | `string` | Yes | — | Reference to the Party this communication was addressed to. |
+| `accountId` | `string` _(optional)_ | No | `null` | Reference to the Account the original communication related to. |
+| `eventType` | [`CommunicationEventType`](./common/enums/CommunicationEventType) | Yes | — | Event type from the original CommunicationEvent. |
+| `channel` | [`ChannelType`](./common/enums/ChannelType) | Yes | — | The actual channel on which delivery was attempted. If original event was AUTO, this shows the resolved channel. |
+| `status` | [`MessageStatus`](./common/enums/MessageStatus) | Yes | — | Current delivery status. |
+| `statusTimestamp` | `long` _(timestamp-millis, UTC ms)_ | Yes | — | UTC timestamp when this status was recorded. |
+| `statusDetail` | `string` _(optional)_ | No | `null` | Human-readable detail of the status, e.g. error message, bounce reason, or gateway response code. |
+| `templateId` | `string` _(optional)_ | No | `null` | Template UUID used for this delivery attempt. |
+| `templateCode` | `string` _(optional)_ | No | `null` | Template code used for this delivery attempt. |
+| `deliveryMetadata` | map\<string, `string`\> | No | `{}` | Channel-specific delivery metadata from the gateway, e.g. email message-ID, SMS gateway receipt ID, push notification token. |
+| `retryCount` | `int` | No | `0` | Number of delivery attempts made. |
+| `nextRetryAt` | `long` _(timestamp-millis, UTC ms)_ _(optional)_ | No | `null` | UTC timestamp of the next scheduled retry attempt, if applicable. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `2.0.0` | 2026-03-01 | MAJOR | ⚠️ Yes | Added mandatory workloadId field propagated from the originating CommunicationEvent for workload-level delivery tracking and SLA reporting |
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

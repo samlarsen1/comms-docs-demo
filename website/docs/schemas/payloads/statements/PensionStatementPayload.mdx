@@ -1,0 +1,82 @@
+---
+id: com-bank-schemas-payloads-statements-pensionstatementpayload
+title: PensionStatementPayload
+description: "Payload for a pension annual benefit statement. Aligned with The Pensions Regulator requirements, FCA COBS 19 pension disclosure rules, and the Simpler Annual Statements standard (DWP 2022). Inspired by Brazil Open Finance Previdência structure."
+tags: [PensionStatementPayload, v1.0.0, Payloads / Statements]
+---
+
+# PensionStatementPayload
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.payloads.statements` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/payloads/statements/PensionStatementPayload.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/payloads/statements/PensionStatementPayload.avsc) |
+
+Payload for a pension annual benefit statement. Aligned with The Pensions Regulator requirements, FCA COBS 19 pension disclosure rules, and the Simpler Annual Statements standard (DWP 2022). Inspired by Brazil Open Finance Previdência structure.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `statementId` | `string` | Yes | — | Unique identifier for this statement. |
+| `accountId` | `string` | Yes | — | Reference to the pension Account. |
+| `memberReference` | `string` | Yes | — | Pension scheme member reference number. |
+| `memberName` | `string` | Yes | — | Full name of the pension scheme member. |
+| `productName` | `string` | Yes | — | Pension product name, e.g. 'Self-Invested Personal Pension (SIPP)'. |
+| `pensionType` | `PensionType` _(inline enum)_ | Yes | — | Type of pension scheme. |
+| `statementDate` | `string` | Yes | — | ISO 8601 date the statement was generated. |
+| `taxYear` | `string` | Yes | — | Tax year this statement covers, e.g. '2024/25'. |
+| `targetRetirementDate` | `string` _(optional)_ | No | `null` | ISO 8601 date of the member's target retirement date. |
+| `fundValue` | [`Money`](./common/Money) | Yes | — | Total current value of the pension fund. |
+| `transferValue` | [`Money`](./common/Money) | Yes | — | Cash equivalent transfer value (CETV) - the value that could be transferred to another provider. |
+| `memberContributionsThisYear` | [`Money`](./common/Money) | Yes | — | Total member contributions in the current tax year. |
+| `employerContributionsThisYear` | [`Money`](./common/Money) _(optional)_ | No | `null` | Total employer contributions in the current tax year, for workplace schemes. |
+| `taxReliefReceivedThisYear` | [`Money`](./common/Money) _(optional)_ | No | `null` | Government tax relief added to contributions in the current tax year. |
+| `lifetimeContributions` | [`Money`](./common/Money) | Yes | — | Total contributions made since scheme inception. |
+| `annualAllowanceUsedThisYear` | [`Money`](./common/Money) _(optional)_ | No | `null` | Amount of annual pension allowance used in the current tax year. |
+| `annualAllowanceRemaining` | [`Money`](./common/Money) _(optional)_ | No | `null` | Remaining annual pension allowance for the current tax year. |
+| `lifetimeAllowanceUsedPercent` | `string` _(optional)_ | No | `null` | Percentage of lifetime allowance used (if applicable under pre-2023 rules). |
+| `totalChargesThisYear` | [`Money`](./common/Money) | Yes | — | Total management charges and fees deducted in the tax year. |
+| `projectedRetirementIncome` | `RetirementIncomeProjection` _(inline record)_ _(optional)_ | No | `null` | Illustrative retirement income projections. |
+| `holdings` | array of `com.bank.schemas.payloads.statements.InvestmentHolding` | No | `[]` | Current fund holdings within the pension. |
+| `nominatedBeneficiaries` | array of `PensionBeneficiary` _(inline record)_ | No | `[]` | Nominated beneficiaries on record. |
+| `correspondenceAddress` | [`Address`](./common/Address) _(optional)_ | No | `null` | Address for printed statement delivery. |
+
+## Nested Types
+
+### RetirementIncomeProjection {#retirementincomeprojection}
+
+Illustrative retirement income projection. These are estimates and not guaranteed.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `projectedFundAtRetirement` | [`Money`](./common/Money) | Yes | — | Estimated fund value at target retirement date. |
+| `estimatedAnnualIncome` | [`Money`](./common/Money) | Yes | — | Estimated annual income if fund used to purchase an annuity. |
+| `estimatedMonthlyIncome` | [`Money`](./common/Money) | Yes | — | Estimated monthly income if fund used to purchase an annuity. |
+| `growthRateAssumptionPercent` | `string` | Yes | — | Annual growth rate assumption used for projection. |
+| `inflationAssumptionPercent` | `string` | Yes | — | Annual inflation assumption used for projection. |
+| `disclaimerText` | `string` | Yes | — | Regulatory disclaimer that projections are not guaranteed. |
+
+### PensionBeneficiary {#pensionbeneficiary}
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `name` | `string` | Yes | — | Beneficiary name. |
+| `relationship` | `string` _(optional)_ | No | `null` | Relationship to member, e.g. 'Spouse', 'Child'. |
+| `sharePercent` | `string` | Yes | — | Percentage share of benefits nominated to this beneficiary. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [CommunicationEvent](./events/CommunicationEvent) | `com.bank.schemas.events` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

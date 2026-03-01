@@ -1,0 +1,71 @@
+---
+id: com-bank-schemas-payloads-letters-interestratechangeletterpayload
+title: InterestRateChangeLetterPayload
+description: "Payload for a letter notifying a customer of a change to their interest rate. Applicable to mortgages, savings accounts, loans, and credit products. Regulatory requirement under FCA MCOB, CONC, and BCOBS. Delivered via POST or DOCUMENT channel."
+tags: [InterestRateChangeLetterPayload, v1.0.0, Payloads / Letters]
+---
+
+# InterestRateChangeLetterPayload
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.payloads.letters` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/payloads/letters/InterestRateChangeLetterPayload.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/payloads/letters/InterestRateChangeLetterPayload.avsc) |
+
+Payload for a letter notifying a customer of a change to their interest rate. Applicable to mortgages, savings accounts, loans, and credit products. Regulatory requirement under FCA MCOB, CONC, and BCOBS. Delivered via POST or DOCUMENT channel.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `letterId` | `string` | Yes | — | Unique identifier for this letter instance. |
+| `referenceNumber` | `string` | Yes | — | Bank reference number for this notice. |
+| `date` | `string` | Yes | — | ISO 8601 date printed on the letter. |
+| `addressedTo` | `string` | Yes | — | Name of the recipient as it will appear on the letter. |
+| `salutation` | `string` | Yes | — | Letter salutation, e.g. 'Dear Mr Johnson'. |
+| `correspondenceAddress` | [`Address`](./common/Address) | Yes | — | Recipient's postal address. |
+| `accountId` | `string` | Yes | — | Reference to the affected Account. |
+| `accountReference` | `string` | Yes | — | Displayable account reference or masked account number. |
+| `productName` | `string` | Yes | — | Name of the product whose rate is changing. |
+| `productType` | [`ProductType`](./common/enums/ProductType) | Yes | — | Product type of the affected account. |
+| `rateChangeReason` | `RateChangeReason` _(inline enum)_ | Yes | — | Reason for the interest rate change. |
+| `currentInterestRatePercent` | `string` | Yes | — | Current annual interest rate as a decimal string, e.g. '4.25'. |
+| `newInterestRatePercent` | `string` | Yes | — | New annual interest rate as a decimal string, e.g. '4.50'. |
+| `rateType` | [`InterestRateType`](./common/enums/InterestRateType) | Yes | — | Structure of the new interest rate. |
+| `baseRateName` | `string` _(optional)_ | No | `null` | Name of the reference rate if applicable, e.g. 'Bank of England Base Rate'. |
+| `baseRateCurrentPercent` | `string` _(optional)_ | No | `null` | Current value of the base rate as a decimal string. |
+| `effectiveDate` | `string` | Yes | — | ISO 8601 date from which the new rate takes effect. |
+| `noticePeriodDays` | `int` _(optional)_ | No | `null` | Number of days notice given before the rate change takes effect. |
+| `impactOnMonthlyPayment` | `PaymentImpact` _(inline record)_ _(optional)_ | No | `null` | Impact on the customer's payments, if applicable (e.g. for mortgages and loans). |
+| `additionalBodyText` | `string` _(optional)_ | No | `null` | Additional body text for template to include, e.g. options available to the customer. |
+| `contactPhoneNumber` | `string` _(optional)_ | No | `null` | Phone number for customer queries about this rate change. |
+| `signatoryName` | `string` | Yes | — | Name or team signing the letter, e.g. 'Mortgage Servicing Team'. |
+
+## Nested Types
+
+### PaymentImpact {#paymentimpact}
+
+Impact of the rate change on the customer's regular payment.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `currentMonthlyPayment` | [`Money`](./common/Money) | Yes | — | Current monthly payment amount. |
+| `newMonthlyPayment` | [`Money`](./common/Money) | Yes | — | New monthly payment amount after the rate change. |
+| `monthlyChangeAmount` | [`Money`](./common/Money) | Yes | — | Change in monthly payment (positive = increase, negative = decrease). |
+| `annualChangeAmount` | [`Money`](./common/Money) | Yes | — | Annualised change in payments. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [CommunicationEvent](./events/CommunicationEvent) | `com.bank.schemas.events` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

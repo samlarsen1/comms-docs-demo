@@ -1,0 +1,78 @@
+---
+id: com-bank-schemas-payloads-statements-investmentstatementpayload
+title: InvestmentStatementPayload
+description: "Payload for an investment account or Stocks and Shares ISA periodic statement. Aligned with MiFID II periodic reporting requirements and UK FCA COBS 16 client reporting rules. Inspired by Brazil Open Finance Dados de Investimentos."
+tags: [InvestmentStatementPayload, v1.0.0, Payloads / Statements]
+---
+
+# InvestmentStatementPayload
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.payloads.statements` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/payloads/statements/InvestmentStatementPayload.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/payloads/statements/InvestmentStatementPayload.avsc) |
+
+Payload for an investment account or Stocks and Shares ISA periodic statement. Aligned with MiFID II periodic reporting requirements and UK FCA COBS 16 client reporting rules. Inspired by Brazil Open Finance Dados de Investimentos.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `statementId` | `string` | Yes | — | Unique identifier for this statement. |
+| `accountId` | `string` | Yes | — | Reference to the investment Account. |
+| `portfolioReference` | `string` | Yes | — | Bank's portfolio reference number. |
+| `accountHolderName` | `string` | Yes | — | Name of the account holder. |
+| `productName` | `string` | Yes | — | Investment product name, e.g. 'Stocks and Shares ISA', 'Investment Portfolio'. |
+| `productType` | [`ProductType`](./common/enums/ProductType) | Yes | — | Investment product classification. |
+| `statementDate` | `string` | Yes | — | ISO 8601 date the statement was generated. |
+| `periodStartDate` | `string` | Yes | — | ISO 8601 start date of the valuation period. |
+| `periodEndDate` | `string` | Yes | — | ISO 8601 end date of the valuation period. |
+| `openingValue` | [`Money`](./common/Money) | Yes | — | Portfolio value at the start of the period. |
+| `closingValue` | [`Money`](./common/Money) | Yes | — | Portfolio value at the end of the period. |
+| `totalDeposited` | [`Money`](./common/Money) | Yes | — | Total amounts deposited/subscribed during the period. |
+| `totalWithdrawn` | [`Money`](./common/Money) | Yes | — | Total amounts withdrawn during the period. |
+| `unrealisedGainLoss` | [`Money`](./common/Money) | Yes | — | Unrealised gain or loss on current holdings. |
+| `realisedGainLoss` | [`Money`](./common/Money) | Yes | — | Realised gain or loss from disposals during the period. |
+| `dividendsReceived` | [`Money`](./common/Money) _(optional)_ | No | `null` | Total dividends or income received during the period. |
+| `totalCharges` | [`Money`](./common/Money) | Yes | — | Total platform, fund management, and transaction charges. |
+| `isaTaxYear` | `string` _(optional)_ | No | `null` | Tax year for ISA accounts, e.g. '2024/25'. |
+| `isaSubscribedThisYear` | [`Money`](./common/Money) _(optional)_ | No | `null` | Amount subscribed to the ISA in the current tax year. |
+| `isaAllowanceRemaining` | [`Money`](./common/Money) _(optional)_ | No | `null` | Remaining ISA annual subscription allowance. |
+| `holdings` | array of `InvestmentHolding` _(inline record)_ | No | `[]` | Current portfolio holdings. |
+| `correspondenceAddress` | [`Address`](./common/Address) _(optional)_ | No | `null` | Address for printed statement delivery. |
+
+## Nested Types
+
+### InvestmentHolding {#investmentholding}
+
+Details of a single investment holding within the portfolio.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `assetName` | `string` | Yes | — | Name of the security or fund. |
+| `isin` | `string` _(optional)_ | No | `null` | International Securities Identification Number (ISO 6166). |
+| `sedol` | `string` _(optional)_ | No | `null` | Stock Exchange Daily Official List code. |
+| `assetType` | `AssetType` _(inline enum)_ | Yes | — | Classification of this asset. |
+| `units` | `string` | Yes | — | Number of units or shares held as a decimal string. |
+| `unitPrice` | [`Money`](./common/Money) | Yes | — | Price per unit/share at the valuation date. |
+| `currentValue` | [`Money`](./common/Money) | Yes | — | Current market value of this holding. |
+| `costBasis` | [`Money`](./common/Money) _(optional)_ | No | `null` | Average acquisition cost for gain/loss calculation. |
+| `unrealisedGainLoss` | [`Money`](./common/Money) _(optional)_ | No | `null` | Unrealised gain or loss on this holding. |
+| `gainLossPercent` | `string` _(optional)_ | No | `null` | Gain/loss as a percentage of cost basis. |
+| `weightPercent` | `string` _(optional)_ | No | `null` | Percentage of total portfolio value represented by this holding. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [CommunicationEvent](./events/CommunicationEvent) | `com.bank.schemas.events` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

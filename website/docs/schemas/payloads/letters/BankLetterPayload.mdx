@@ -1,0 +1,75 @@
+---
+id: com-bank-schemas-payloads-letters-bankletterpayload
+title: BankLetterPayload
+description: "Payload for a general bank letter. Used for account management communications, regulatory notices, product change notifications, and general correspondence. Content is structured to support both printed (POST/DOCUMENT) and digital (EMAIL/IN_APP) delivery."
+tags: [BankLetterPayload, v1.0.0, Payloads / Letters]
+---
+
+# BankLetterPayload
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.payloads.letters` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/payloads/letters/BankLetterPayload.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/payloads/letters/BankLetterPayload.avsc) |
+
+Payload for a general bank letter. Used for account management communications, regulatory notices, product change notifications, and general correspondence. Content is structured to support both printed (POST/DOCUMENT) and digital (EMAIL/IN_APP) delivery.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `letterId` | `string` | Yes | — | Unique identifier for this letter instance. |
+| `letterType` | `BankLetterType` _(inline enum)_ | Yes | — | The purpose and type of this letter. |
+| `referenceNumber` | `string` | Yes | — | Bank reference number for this letter, for customer and staff use. |
+| `date` | `string` | Yes | — | ISO 8601 date printed on the letter: YYYY-MM-DD. |
+| `addressedTo` | `string` | Yes | — | Name of the recipient as it will appear on the letter. |
+| `salutation` | `string` | Yes | — | Salutation line, e.g. 'Dear Mr Smith' or 'Dear Valued Customer'. |
+| `correspondenceAddress` | [`Address`](./common/Address) | Yes | — | Recipient's postal address. |
+| `subject` | `string` | Yes | — | Letter subject line, e.g. 'Important changes to your account terms'. |
+| `accountReference` | `string` _(optional)_ | No | `null` | Account or product reference the letter relates to. |
+| `sections` | array of `LetterSection` _(inline record)_ | Yes | — | Ordered list of letter body sections. |
+| `closingText` | `string` | Yes | — | Closing text, e.g. 'Yours sincerely'. |
+| `signatoryName` | `string` | Yes | — | Name of the signatory or team, e.g. 'Customer Relations Team'. |
+| `signatoryTitle` | `string` _(optional)_ | No | `null` | Title of the signatory, e.g. 'Head of Customer Relations'. |
+| `enclosures` | array of `string` | No | `[]` | List of enclosures, e.g. ['Terms and Conditions booklet', 'Privacy Notice']. |
+| `responseRequired` | `boolean` | No | `false` | Whether the customer is required to respond or take action. |
+| `responseDeadlineDate` | `string` _(optional)_ | No | `null` | ISO 8601 date by which the customer must respond, if applicable. |
+| `contactDetails` | `LetterContactDetails` _(inline record)_ _(optional)_ | No | `null` | Relevant bank contact details for this communication. |
+
+## Nested Types
+
+### LetterSection {#lettersection}
+
+A discrete section of the letter body. Allows structured content for template rendering.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `sectionTitle` | `string` _(optional)_ | No | `null` | Optional section heading. |
+| `content` | `string` | Yes | — | Section body text. May contain template variable placeholders. |
+| `isBulletList` | `boolean` | No | `false` | Whether the content represents a bullet-pointed list. |
+
+### LetterContactDetails {#lettercontactdetails}
+
+Bank contact details for the customer to use in relation to this letter.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `phoneNumber` | `string` _(optional)_ | No | `null` | Phone number the customer can call. |
+| `emailAddress` | `string` _(optional)_ | No | `null` | Email address the customer can write to. |
+| `openingHours` | `string` _(optional)_ | No | `null` | Opening hours for the contact channel. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [CommunicationEvent](./events/CommunicationEvent) | `com.bank.schemas.events` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

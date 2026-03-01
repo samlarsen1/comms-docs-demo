@@ -1,0 +1,50 @@
+---
+id: com-bank-schemas-common-enums-messagestatus
+title: MessageStatus
+description: "Lifecycle status of a communication message. Aligned with ISO 20022 status codes and extended for multi-channel delivery tracking."
+tags: [MessageStatus, v1.0.0, Common Enums]
+---
+
+# MessageStatus
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.common.enums` |
+| **Type** | `enum` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/common/enums/MessageStatus.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/common/enums/MessageStatus.avsc) |
+
+Lifecycle status of a communication message. Aligned with ISO 20022 status codes and extended for multi-channel delivery tracking.
+
+## Symbols
+
+| Symbol |
+|--------|
+| `PENDING` |
+| `QUEUED` |
+| `DISPATCHED` |
+| `SENT` |
+| `DELIVERED` |
+| `READ` |
+| `FAILED` |
+| `BOUNCED` |
+| `EXPIRED` |
+| `CANCELLED` |
+| `OPTED_OUT` |
+| `TEMPLATE_NOT_FOUND` |
+| `CHANNEL_UNAVAILABLE` |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [AutoChannelDispatch](./channels/AutoChannelDispatch) | `com.bank.schemas.channels` |
+| [CommunicationEventResponse](./events/CommunicationEventResponse) | `com.bank.schemas.events` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

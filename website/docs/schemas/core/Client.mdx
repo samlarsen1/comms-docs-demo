@@ -1,0 +1,33 @@
+---
+id: com-bank-schemas-core-client
+title: Client
+description: "Registered upstream client application authorised to produce CommunicationEvents. Clients are onboarded and assigned an applicationId before they can publish to the communications platform. Each client may own one or more Workloads."
+tags: [Client, v1.0.0, Core Entities]
+---
+
+# Client
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.core` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/core/Client.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/core/Client.avsc) |
+
+Registered upstream client application authorised to produce CommunicationEvents. Clients are onboarded and assigned an applicationId before they can publish to the communications platform. Each client may own one or more Workloads.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `clientId` | `string` | Yes | — | Bank-assigned UUID uniquely identifying this client registration. |
+| `applicationId` | `string` | Yes | — | Unique application code assigned at onboarding. Must match pattern ^AL\d&#123;6&#125;$ — prefix 'AL' followed by exactly 6 digits, e.g. 'AL000123'. Validated at registration time; the communications platform will reject events from unregistered application IDs. |
+| `applicationName` | `string` | Yes | — | Human-readable name of the upstream application, e.g. 'Core Banking System', 'Fraud Engine', 'Card Processing'. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

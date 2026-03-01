@@ -1,0 +1,58 @@
+---
+id: com-bank-schemas-common-address
+title: Address
+description: "Postal address aligned with ISO 20022 PostalAddress24 and UK Royal Mail addressing standards. Used for correspondence, registered, and residential address types."
+tags: [Address, v1.0.0, Common Types]
+---
+
+# Address
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.common` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `FULL` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/common/Address.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/common/Address.avsc) |
+
+Postal address aligned with ISO 20022 PostalAddress24 and UK Royal Mail addressing standards. Used for correspondence, registered, and residential address types.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `addressType` | `AddressType` _(inline enum)_ | Yes | — | The purpose of this address. |
+| `careOf` | `string` _(optional)_ | No | `null` | Care-of name, e.g. 'c/o John Smith'. |
+| `buildingName` | `string` _(optional)_ | No | `null` | Name of the building, e.g. 'Canary Wharf Tower'. |
+| `buildingNumber` | `string` _(optional)_ | No | `null` | House or building number on the street. |
+| `subBuildingName` | `string` _(optional)_ | No | `null` | Flat, apartment, or unit identifier within a building. |
+| `streetName` | `string` _(optional)_ | No | `null` | Name of the street or road. |
+| `addressLine1` | `string` _(optional)_ | No | `null` | First line of address (often building number + street name combined). |
+| `addressLine2` | `string` _(optional)_ | No | `null` | Second line of address. |
+| `addressLine3` | `string` _(optional)_ | No | `null` | Third line of address. |
+| `townName` | `string` | Yes | — | Town, city, or locality name. |
+| `county` | `string` _(optional)_ | No | `null` | County, district, or state/province. |
+| `postCode` | `string` _(optional)_ | No | `null` | Postal or ZIP code. |
+| `country` | `string` | Yes | — | ISO 3166-1 alpha-2 country code, e.g. 'GB', 'US', 'BR'. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [Party](./core/Party) | `com.bank.schemas.core` |
+| [BankLetterPayload](./payloads/letters/BankLetterPayload) | `com.bank.schemas.payloads.letters` |
+| [InterestRateChangeLetterPayload](./payloads/letters/InterestRateChangeLetterPayload) | `com.bank.schemas.payloads.letters` |
+| [CommercialStatementPayload](./payloads/statements/CommercialStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [CreditCardStatementPayload](./payloads/statements/CreditCardStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [CurrentAccountStatementPayload](./payloads/statements/CurrentAccountStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [InvestmentStatementPayload](./payloads/statements/InvestmentStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [LoanStatementPayload](./payloads/statements/LoanStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [MortgageStatementPayload](./payloads/statements/MortgageStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [PensionStatementPayload](./payloads/statements/PensionStatementPayload) | `com.bank.schemas.payloads.statements` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

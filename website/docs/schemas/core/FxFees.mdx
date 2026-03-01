@@ -1,0 +1,43 @@
+---
+id: com-bank-schemas-core-fxfees
+title: FxFees
+description: "Foreign exchange fee definitions for a product. Covers exchange rate markup, cross-border transaction fees, and ATM withdrawal charges. Relevant for current accounts, credit cards, and FX accounts."
+tags: [FxFees, v1.0.0, Core Entities]
+---
+
+# FxFees
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.core` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/core/FxFees.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/core/FxFees.avsc) |
+
+Foreign exchange fee definitions for a product. Covers exchange rate markup, cross-border transaction fees, and ATM withdrawal charges. Relevant for current accounts, credit cards, and FX accounts.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `fxFeeId` | `string` | Yes | — | Unique identifier for this FX fee definition. |
+| `productId` | `string` | Yes | — | Reference to the Product this FX fee applies to. |
+| `fxFeeType` | `FxFeeType` _(inline enum)_ | Yes | — | Type of foreign exchange fee. |
+| `description` | `string` _(optional)_ | No | `null` | Human-readable description of this FX fee. |
+| `exchangeRateMarkupPercent` | `string` _(optional)_ | No | `null` | Percentage added to the interbank/Visa/Mastercard rate, e.g. '2.75'. |
+| `transactionFeePercent` | `string` _(optional)_ | No | `null` | Percentage of the transaction value charged as a fee, e.g. '1.5'. |
+| `transactionFeeFixedAmount` | [`Money`](./common/Money) _(optional)_ | No | `null` | Fixed fee applied per transaction. |
+| `minimumFee` | [`Money`](./common/Money) _(optional)_ | No | `null` | Minimum fee charged per transaction. |
+| `maximumFee` | [`Money`](./common/Money) _(optional)_ | No | `null` | Maximum fee charged per transaction. |
+| `applicableCurrencies` | array of `string` | No | `[]` | ISO 4217 currency codes to which this fee applies. Empty array means all non-domestic currencies. |
+| `waivableWithProduct` | `string` _(optional)_ | No | `null` | Product ID of a companion product that waives this fee, e.g. a premium current account. |
+| `effectiveFrom` | `string` | Yes | — | ISO 8601 date from which this FX fee definition is effective. |
+| `effectiveTo` | `string` _(optional)_ | No | `null` | ISO 8601 date after which this FX fee definition is no longer effective. Null if open-ended. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

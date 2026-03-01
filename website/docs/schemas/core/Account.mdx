@@ -1,0 +1,46 @@
+---
+id: com-bank-schemas-core-account
+title: Account
+description: "A bank account instance held by a party. Aligned with UK Open Banking OBAccount6 and ISO 20022 CashAccount38. Includes UK-specific fields (sort code) and IBAN/BIC for international accounts."
+tags: [Account, v1.0.0, Core Entities]
+---
+
+# Account
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.core` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/core/Account.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/core/Account.avsc) |
+
+A bank account instance held by a party. Aligned with UK Open Banking OBAccount6 and ISO 20022 CashAccount38. Includes UK-specific fields (sort code) and IBAN/BIC for international accounts.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `accountId` | `string` | Yes | — | Bank-assigned UUID uniquely identifying this account. |
+| `productId` | `string` | Yes | — | Reference to the Product this account is an instance of. |
+| `accountType` | [`ProductType`](./common/enums/ProductType) | Yes | — | The type of account, derived from the product type. |
+| `subType` | `string` _(optional)_ | No | `null` | Optional subtype for further classification, e.g. 'PACKAGED', 'STUDENT', 'GRADUATE'. |
+| `status` | [`AccountStatus`](./common/enums/AccountStatus) | Yes | — | Current lifecycle status of the account. |
+| `currency` | `string` | Yes | — | ISO 4217 currency code for this account. |
+| `nickname` | `string` _(optional)_ | No | `null` | Customer-defined nickname for the account. |
+| `sortCode` | `string` _(optional)_ | No | `null` | UK sort code (6 digits, no dashes), e.g. '123456'. Null for non-UK accounts. |
+| `accountNumber` | `string` _(optional)_ | No | `null` | UK account number (8 digits). Null for non-account products such as ISAs without a direct debit facility. |
+| `iban` | `string` _(optional)_ | No | `null` | International Bank Account Number (IBAN) per ISO 13616. |
+| `bic` | `string` _(optional)_ | No | `null` | Bank Identifier Code (BIC/SWIFT) per ISO 9362. |
+| `openingDate` | `string` | Yes | — | ISO 8601 date the account was opened: YYYY-MM-DD. |
+| `closingDate` | `string` _(optional)_ | No | `null` | ISO 8601 date the account was or will be closed. Null if open. |
+| `maturityDate` | `string` _(optional)_ | No | `null` | ISO 8601 maturity date for fixed-term products such as bonds or fixed-rate mortgages. |
+| `primaryPartyId` | `string` | Yes | — | Reference to the primary Party who owns this account. |
+| `servicingBranchId` | `string` _(optional)_ | No | `null` | Identifier of the branch or servicing centre responsible for this account. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

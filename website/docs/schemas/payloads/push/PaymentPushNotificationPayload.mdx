@@ -1,0 +1,64 @@
+---
+id: com-bank-schemas-payloads-push-paymentpushnotificationpayload
+title: PaymentPushNotificationPayload
+description: "Payload for a mobile push notification related to a payment event. Designed for brevity suitable for device lock-screen display. Supports real-time payment notifications aligned with UK Faster Payments Service and CHAPS notification best practices."
+tags: [PaymentPushNotificationPayload, v1.0.0, Payloads / Push]
+---
+
+# PaymentPushNotificationPayload
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.payloads.push` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/payloads/push/PaymentPushNotificationPayload.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/payloads/push/PaymentPushNotificationPayload.avsc) |
+
+Payload for a mobile push notification related to a payment event. Designed for brevity suitable for device lock-screen display. Supports real-time payment notifications aligned with UK Faster Payments Service and CHAPS notification best practices.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `notificationId` | `string` | Yes | — | Unique identifier for this push notification. |
+| `partyId` | `string` | Yes | — | Reference to the Party whose device(s) should receive this notification. |
+| `accountId` | `string` | Yes | — | Reference to the Account the payment relates to. |
+| `transactionId` | `string` _(optional)_ | No | `null` | Reference to the Transaction that triggered this notification. |
+| `notificationType` | `PaymentNotificationType` _(inline enum)_ | Yes | — | The type of payment event. |
+| `amount` | [`Money`](./common/Money) | Yes | — | Payment amount. |
+| `counterpartyName` | `string` _(optional)_ | No | `null` | Name of the payee or payer, e.g. 'Amazon', 'John Smith'. Truncate to 30 characters for display. |
+| `accountBalance` | [`Money`](./common/Money) _(optional)_ | No | `null` | Account balance after the payment, if available. |
+| `title` | `string` | Yes | — | Push notification title displayed on the device. Max 50 characters. E.g. 'Payment received'. |
+| `body` | `string` | Yes | — | Push notification body text displayed on the device. Max 150 characters. E.g. 'You received £250.00 from HMRC PAYE'. |
+| `deepLinkPath` | `string` _(optional)_ | No | `null` | In-app navigation path to open when the notification is tapped, e.g. '/accounts/&#123;accountId&#125;/transactions/&#123;transactionId&#125;'. The app prepends the scheme. |
+| `imageUrl` | `string` _(optional)_ | No | `null` | URL of an image or merchant logo to display with rich push notifications. |
+| `isActionable` | `boolean` | No | `false` | Whether this notification includes quick-action buttons. |
+| `actions` | array of `NotificationAction` _(inline record)_ | No | `[]` | Quick-action buttons for rich push notifications. |
+| `ttlSeconds` | `int` | No | `86400` | Time-to-live in seconds. Notifications older than this are discarded by the push gateway if undelivered. Default 24 hours. |
+| `collapseKey` | `string` _(optional)_ | No | `null` | Collapse key to replace unread notifications of the same type. E.g. 'LOW_BALANCE_&#123;accountId&#125;'. |
+
+## Nested Types
+
+### NotificationAction {#notificationaction}
+
+A quick-action button on a rich push notification.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `actionId` | `string` | Yes | — | Identifier for the action, handled by the app. |
+| `label` | `string` | Yes | — | Button label text, e.g. 'View transaction'. |
+| `deepLinkPath` | `string` _(optional)_ | No | `null` | Deep link path triggered by this action. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [CommunicationEvent](./events/CommunicationEvent) | `com.bank.schemas.events` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

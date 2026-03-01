@@ -1,0 +1,41 @@
+---
+id: com-bank-schemas-common-contactdetails
+title: ContactDetails
+description: "Contact information for a party. Aligned with ISO 20022 ContactDetails2. Phone numbers should use E.164 format (e.g. '+447911123456')."
+tags: [ContactDetails, v1.0.0, Common Types]
+---
+
+# ContactDetails
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.common` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `FULL` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/common/ContactDetails.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/common/ContactDetails.avsc) |
+
+Contact information for a party. Aligned with ISO 20022 ContactDetails2. Phone numbers should use E.164 format (e.g. '+447911123456').
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `emailAddress` | `string` _(optional)_ | No | `null` | Primary email address for electronic communications. |
+| `mobileNumber` | `string` _(optional)_ | No | `null` | Mobile phone number in E.164 format, used for SMS and push notifications. |
+| `homePhoneNumber` | `string` _(optional)_ | No | `null` | Home landline phone number in E.164 format. |
+| `workPhoneNumber` | `string` _(optional)_ | No | `null` | Work phone number in E.164 format. |
+| `preferredContactMethod` | `PreferredContactMethod` _(inline enum)_ | No | `"EMAIL"` | Customer's preferred method of direct contact. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [Party](./core/Party) | `com.bank.schemas.core` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

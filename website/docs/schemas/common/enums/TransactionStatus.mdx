@@ -1,0 +1,43 @@
+---
+id: com-bank-schemas-common-enums-transactionstatus
+title: TransactionStatus
+description: "Transaction status aligned with UK Open Banking OBEntryStatus1Code and ISO 20022 TransactionIndividualStatus1Code."
+tags: [TransactionStatus, v1.0.0, Common Enums]
+---
+
+# TransactionStatus
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.common.enums` |
+| **Type** | `enum` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/common/enums/TransactionStatus.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/common/enums/TransactionStatus.avsc) |
+
+Transaction status aligned with UK Open Banking OBEntryStatus1Code and ISO 20022 TransactionIndividualStatus1Code.
+
+## Symbols
+
+| Symbol |
+|--------|
+| `BOOKED` |
+| `PENDING` |
+| `INFORMATION` |
+| `FUTURE_DATED` |
+| `REJECTED` |
+| `CANCELLED` |
+| `REVERSED` |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [Transaction](./core/Transaction) | `com.bank.schemas.core` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

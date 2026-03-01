@@ -1,0 +1,68 @@
+---
+id: com-bank-schemas-events-communicationevent
+title: CommunicationEvent
+description: "Top-level event envelope for all bank communications. This is the root schema consumed by communication dispatch services, audit systems, and downstream handlers. Each event carries: (1) system metadata identifying the originating system and correlation chain; (2) routing metadata specifying channel and priority; (3) party and account context; (4) a discriminated union payload carrying the channel-specific communication data. When channel is AUTO, the auto-dispatcher resolves the actual delivery channel(s) at runtime by consulting CommunicationPreferences and Template availability."
+tags: [CommunicationEvent, v3.0.0, Events]
+---
+
+# CommunicationEvent
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.events` |
+| **Type** | `record` |
+| **Version** | `3.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/events/CommunicationEvent.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/events/CommunicationEvent.avsc) |
+
+Top-level event envelope for all bank communications. This is the root schema consumed by communication dispatch services, audit systems, and downstream handlers. Each event carries: (1) system metadata identifying the originating system and correlation chain; (2) routing metadata specifying channel and priority; (3) party and account context; (4) a discriminated union payload carrying the channel-specific communication data. When channel is AUTO, the auto-dispatcher resolves the actual delivery channel(s) at runtime by consulting CommunicationPreferences and Template availability.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `eventId` | `string` | Yes | — | Globally unique UUID for this event instance. Used for idempotency and deduplication. |
+| `eventType` | [`CommunicationEventType`](./common/enums/CommunicationEventType) | Yes | — | Classification of the communication event determining routing, template selection, and preference lookup. |
+| `schemaVersion` | `string` | Yes | — | Semantic version of this event schema, e.g. '1.0.0'. Consumers should validate compatibility. |
+| `eventTimestamp` | `long` _(timestamp-millis, UTC ms)_ | Yes | — | UTC timestamp when this event was created by the source system. |
+| `correlationId` | `string` _(optional)_ | No | `null` | Correlation ID linking this event to a business transaction or user journey. Propagated across all services for distributed tracing. |
+| `causationId` | `string` _(optional)_ | No | `null` | ID of the upstream event or request that caused this event to be created. |
+| `idempotencyKey` | `string` _(optional)_ | No | `null` | Idempotency key provided by the source system to prevent duplicate dispatch. The dispatcher will reject duplicate events with the same key within a TTL window. |
+| `sourceSystem` | `SourceSystem` _(inline record)_ | Yes | — | Metadata about the system that originated this event. |
+| `workloadId` | `string` | Yes | — | Reference to the Workload that produced this event. Mandatory on all events — used for volume attribution, SLA tracking, and billing. The workloadId must be registered under the client identified in sourceSystem.systemId. |
+| `channel` | [`ChannelType`](./common/enums/ChannelType) | Yes | — | Target delivery channel. Set to AUTO to enable automatic channel resolution based on customer preferences and template availability. |
+| `priority` | [`MessagePriority`](./common/enums/MessagePriority) | No | `"NORMAL"` | Delivery priority affecting queue position. URGENT bypasses standard queuing for time-sensitive communications such as fraud alerts. |
+| `partyId` | `string` _(optional)_ | No | `null` | Reference to the Party who is the recipient of this communication. Null for batch pre-composed document events where individual party identity is resolved at delivery time via the payload's recipientAddressing (journal file or embedded AFP index). |
+| `batchId` | `string` _(optional)_ | No | `null` | Identifier for the batch job that produced this event. Set when partyId is null (batch pre-composed document events). Used to correlate all CommunicationEvents and CommunicationEventResponses belonging to a single print/dispatch run. |
+| `accountId` | `string` _(optional)_ | No | `null` | Reference to the Account this communication relates to, if applicable. |
+| `productId` | `string` _(optional)_ | No | `null` | Reference to the Product this communication relates to, if applicable. |
+| `productHoldingId` | `string` _(optional)_ | No | `null` | Reference to the ProductHolding, used to resolve product-specific communication preferences. |
+| `templateId` | `string` _(optional)_ | No | `null` | Explicit template UUID to use for this communication. If null, the dispatcher resolves the template from eventType, channel, and customer language preference. |
+| `templateCode` | `string` _(optional)_ | No | `null` | Human-readable template code as an alternative to templateId, e.g. 'STMT_CURRENT_ACCOUNT_EMAIL_EN_GB'. |
+| `scheduledFor` | `long` _(timestamp-millis, UTC ms)_ _(optional)_ | No | `null` | UTC timestamp to schedule delivery for. Null means deliver immediately. |
+| `expiresAt` | `long` _(timestamp-millis, UTC ms)_ _(optional)_ | No | `null` | UTC timestamp after which delivery should not be attempted. Used for time-sensitive communications. |
+| `payload` | [`CurrentAccountStatementPayload`](./payloads/statements/CurrentAccountStatementPayload) \| [`CreditCardStatementPayload`](./payloads/statements/CreditCardStatementPayload) \| [`MortgageStatementPayload`](./payloads/statements/MortgageStatementPayload) \| [`LoanStatementPayload`](./payloads/statements/LoanStatementPayload) \| [`InvestmentStatementPayload`](./payloads/statements/InvestmentStatementPayload) \| [`PensionStatementPayload`](./payloads/statements/PensionStatementPayload) \| [`CommercialStatementPayload`](./payloads/statements/CommercialStatementPayload) \| [`BankLetterPayload`](./payloads/letters/BankLetterPayload) \| [`InterestRateChangeLetterPayload`](./payloads/letters/InterestRateChangeLetterPayload) \| [`InterestRateChangeEmailPayload`](./payloads/emails/InterestRateChangeEmailPayload) \| [`FraudNotificationSmsPayload`](./payloads/sms/FraudNotificationSmsPayload) \| [`PaymentPushNotificationPayload`](./payloads/push/PaymentPushNotificationPayload) | Yes | — | The communication payload. The type is discriminated by the fully-qualified Avro type name. For AUTO channel events, the same payload is used to render all attempted channels - templates must declare which payload types they support. |
+| `metadata` | map\<string, `string`\> | No | `{}` | Arbitrary key-value metadata for extensibility. Used for A/B testing flags, campaign IDs, regulatory codes, and other context that does not fit the standard fields. |
+
+## Nested Types
+
+### SourceSystem {#sourcesystem}
+
+Identifies the upstream system that produced this communication event.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `systemId` | `string` | Yes | — | Unique identifier for the source system, e.g. 'CORE_BANKING', 'CARD_PROCESSING', 'FRAUD_ENGINE'. |
+| `systemName` | `string` | Yes | — | Human-readable name of the source system. |
+| `systemVersion` | `string` _(optional)_ | No | `null` | Version of the source system that produced this event. |
+| `environment` | `Environment` _(inline enum)_ | Yes | — | Environment from which this event originated. |
+| `upstreamReference` | `string` _(optional)_ | No | `null` | Reference ID in the source system that triggered this event, e.g. a payment ID, fraud case ID, or batch job ID. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `3.0.0` | 2026-03-01 | MAJOR | ⚠️ Yes | Added mandatory workloadId field for volume attribution, SLA tracking, and billing against registered Workloads |
+| `2.0.0` | 2026-03-01 | MAJOR | ⚠️ Yes | Made partyId nullable to support batch pre-composed document events where party identity is resolved via journal or embedded AFP addressing; added batchId field for batch correlation |
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

@@ -1,0 +1,66 @@
+---
+id: com-bank-schemas-common-enums-producttype
+title: ProductType
+description: "Product classification aligned with UK Open Banking OBExternalAccountSubType1Code and extended for investment, pension, and commercial products."
+tags: [ProductType, v1.0.0, Common Enums]
+---
+
+# ProductType
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.common.enums` |
+| **Type** | `enum` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/common/enums/ProductType.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/common/enums/ProductType.avsc) |
+
+Product classification aligned with UK Open Banking OBExternalAccountSubType1Code and extended for investment, pension, and commercial products.
+
+## Symbols
+
+| Symbol |
+|--------|
+| `CURRENT_ACCOUNT` |
+| `SAVINGS_ACCOUNT` |
+| `BASIC_BANK_ACCOUNT` |
+| `MORTGAGE` |
+| `PERSONAL_LOAN` |
+| `CREDIT_CARD` |
+| `CHARGE_CARD` |
+| `OVERDRAFT` |
+| `ISA` |
+| `STOCKS_AND_SHARES_ISA` |
+| `CASH_ISA` |
+| `INVESTMENT_ACCOUNT` |
+| `PENSION_SIPP` |
+| `PENSION_WORKPLACE` |
+| `PENSION_DEFINED_BENEFIT` |
+| `COMMERCIAL_CURRENT_ACCOUNT` |
+| `COMMERCIAL_SAVINGS` |
+| `COMMERCIAL_LOAN` |
+| `COMMERCIAL_CREDIT_CARD` |
+| `TRADE_FINANCE` |
+| `FX_ACCOUNT` |
+| `ESCROW_ACCOUNT` |
+| `TRUST_ACCOUNT` |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [Account](./core/Account) | `com.bank.schemas.core` |
+| [Product](./core/Product) | `com.bank.schemas.core` |
+| [InterestRateChangeEmailPayload](./payloads/emails/InterestRateChangeEmailPayload) | `com.bank.schemas.payloads.emails` |
+| [InterestRateChangeLetterPayload](./payloads/letters/InterestRateChangeLetterPayload) | `com.bank.schemas.payloads.letters` |
+| [CommercialStatementPayload](./payloads/statements/CommercialStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [InvestmentStatementPayload](./payloads/statements/InvestmentStatementPayload) | `com.bank.schemas.payloads.statements` |
+| [CommunicationPreferences](./reference/CommunicationPreferences) | `com.bank.schemas.reference` |
+| [Template](./reference/Template) | `com.bank.schemas.reference` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

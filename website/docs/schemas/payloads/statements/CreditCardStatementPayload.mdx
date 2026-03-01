@@ -1,0 +1,73 @@
+---
+id: com-bank-schemas-payloads-statements-creditcardstatementpayload
+title: CreditCardStatementPayload
+description: "Payload for a credit card monthly statement. Aligned with UK Open Banking OBStatement2 and FCA consumer credit disclosure requirements."
+tags: [CreditCardStatementPayload, v1.0.0, Payloads / Statements]
+---
+
+# CreditCardStatementPayload
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.payloads.statements` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/payloads/statements/CreditCardStatementPayload.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/payloads/statements/CreditCardStatementPayload.avsc) |
+
+Payload for a credit card monthly statement. Aligned with UK Open Banking OBStatement2 and FCA consumer credit disclosure requirements.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `statementId` | `string` | Yes | — | Unique identifier for this statement. |
+| `accountId` | `string` | Yes | — | Reference to the credit card Account. |
+| `maskedCardNumber` | `string` | Yes | — | Masked card number for display, e.g. '**** **** **** 1234'. |
+| `accountHolderName` | `string` | Yes | — | Name of the primary cardholder. |
+| `productName` | `string` | Yes | — | Credit card product name, e.g. 'Premier Rewards Credit Card'. |
+| `statementDate` | `string` | Yes | — | ISO 8601 date the statement was generated. |
+| `periodStartDate` | `string` | Yes | — | ISO 8601 start date of the billing period. |
+| `periodEndDate` | `string` | Yes | — | ISO 8601 end date of the billing period. |
+| `paymentDueDate` | `string` | Yes | — | ISO 8601 date by which payment must be received to avoid late fees. |
+| `minimumPaymentAmount` | [`Money`](./common/Money) | Yes | — | Minimum payment amount required by the due date. |
+| `minimumPaymentDueDate` | `string` | Yes | — | ISO 8601 date by which the minimum payment must be received. |
+| `statementBalance` | [`Money`](./common/Money) | Yes | — | Total balance owed as at the statement date. |
+| `previousBalance` | [`Money`](./common/Money) | Yes | — | Balance carried forward from the previous statement. |
+| `paymentsReceived` | [`Money`](./common/Money) | Yes | — | Total payments received during the billing period. |
+| `purchasesTotal` | [`Money`](./common/Money) | Yes | — | Total value of purchases in the billing period. |
+| `cashAdvancesTotal` | [`Money`](./common/Money) _(optional)_ | No | `null` | Total cash advance amounts in the billing period. |
+| `balanceTransfersTotal` | [`Money`](./common/Money) _(optional)_ | No | `null` | Total balance transfers in the billing period. |
+| `interestCharged` | [`Money`](./common/Money) | Yes | — | Total interest charges applied in the billing period. |
+| `purchaseInterestRate` | `string` | Yes | — | Annual purchase interest rate as a decimal string, e.g. '21.9'. |
+| `cashAdvanceInterestRate` | `string` _(optional)_ | No | `null` | Annual cash advance interest rate as a decimal string. |
+| `feesCharged` | [`Money`](./common/Money) _(optional)_ | No | `null` | Total fees charged in the billing period, e.g. late payment fees. |
+| `creditLimit` | [`Money`](./common/Money) | Yes | — | Current credit limit. |
+| `availableCredit` | [`Money`](./common/Money) | Yes | — | Available credit remaining at statement date. |
+| `rewardsBalance` | `RewardsBalance` _(inline record)_ _(optional)_ | No | `null` | Rewards or cashback programme balance. |
+| `transactions` | array of `com.bank.schemas.payloads.statements.StatementTransaction` | No | `[]` | Transactions in this billing period. |
+| `correspondenceAddress` | [`Address`](./common/Address) _(optional)_ | No | `null` | Address for printed statement delivery. |
+
+## Nested Types
+
+### RewardsBalance {#rewardsbalance}
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `programName` | `string` | Yes | — | Name of the rewards programme. |
+| `points` | `long` _(optional)_ | No | `null` | Points balance. |
+| `cashbackAmount` | [`Money`](./common/Money) _(optional)_ | No | `null` | Cashback balance in monetary terms. |
+| `pointsEarnedThisPeriod` | `long` _(optional)_ | No | `null` | Points earned during this billing period. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [CommunicationEvent](./events/CommunicationEvent) | `com.bank.schemas.events` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

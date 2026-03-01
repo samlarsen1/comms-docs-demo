@@ -1,0 +1,42 @@
+---
+id: com-bank-schemas-common-identifier
+title: Identifier
+description: "A formal identifier for a party or entity. Supports government IDs, company numbers, and financial identifiers aligned with ISO 20022 GenericIdentification."
+tags: [Identifier, v1.0.0, Common Types]
+---
+
+# Identifier
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.common` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `FULL` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/common/Identifier.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/common/Identifier.avsc) |
+
+A formal identifier for a party or entity. Supports government IDs, company numbers, and financial identifiers aligned with ISO 20022 GenericIdentification.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `identifierType` | `IdentifierType` _(inline enum)_ | Yes | — | The type of this identifier. |
+| `value` | `string` | Yes | — | The identifier value. |
+| `issuer` | `string` _(optional)_ | No | `null` | The issuing authority or organisation, e.g. 'DVLA', 'Companies House'. |
+| `issuedDate` | `string` _(optional)_ | No | `null` | Date the identifier was issued. ISO 8601 date format: YYYY-MM-DD. |
+| `expiryDate` | `string` _(optional)_ | No | `null` | Date the identifier expires. ISO 8601 date format: YYYY-MM-DD. |
+| `countryOfIssue` | `string` _(optional)_ | No | `null` | ISO 3166-1 alpha-2 country code of issuing authority. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [Party](./core/Party) | `com.bank.schemas.core` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

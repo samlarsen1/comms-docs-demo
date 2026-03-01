@@ -1,0 +1,49 @@
+---
+id: com-bank-schemas-core-balance
+title: Balance
+description: "Account balance at a point in time. Aligned with UK Open Banking OBReadBalance1 and ISO 20022 CashBalance8."
+tags: [Balance, v1.0.0, Core Entities]
+---
+
+# Balance
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.core` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/core/Balance.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/core/Balance.avsc) |
+
+Account balance at a point in time. Aligned with UK Open Banking OBReadBalance1 and ISO 20022 CashBalance8.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `balanceId` | `string` | Yes | — | Unique identifier for this balance record. |
+| `accountId` | `string` | Yes | — | Reference to the Account this balance belongs to. |
+| `balanceType` | [`BalanceType`](./common/enums/BalanceType) | Yes | — | The type of balance being reported. |
+| `amount` | [`Money`](./common/Money) | Yes | — | The balance amount. |
+| `creditDebitIndicator` | [`CreditDebitIndicator`](./common/enums/CreditDebitIndicator) | Yes | — | Whether the balance is a credit (in-credit) or debit (overdrawn) position. |
+| `dateTime` | `long` _(timestamp-millis, UTC ms)_ | Yes | — | UTC timestamp at which this balance was calculated or reported. |
+| `creditLine` | array of `CreditLine` _(inline record)_ | No | `[]` | Associated credit lines or overdraft facilities. |
+
+## Nested Types
+
+### CreditLine {#creditline}
+
+Credit facility or limit associated with the account, such as an overdraft.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `included` | `boolean` | Yes | — | Whether this credit line amount is included in the balance figure. |
+| `type` | `CreditLineType` _(inline enum)_ | Yes | — | Type of credit facility. |
+| `amount` | [`Money`](./common/Money) | Yes | — | The credit limit amount. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

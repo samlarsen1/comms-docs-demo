@@ -1,0 +1,99 @@
+---
+id: com-bank-schemas-reference-channeltemplate
+title: ChannelTemplate
+description: "Channel-specific configuration for a template. One ChannelTemplate record exists per supported channel per Template. Stores channel-specific rendering parameters such as email subject lines, SMS sender IDs, push notification titles, and document paper sizes."
+tags: [ChannelTemplate, v1.0.0, Reference]
+---
+
+# ChannelTemplate
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.reference` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/reference/ChannelTemplate.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/reference/ChannelTemplate.avsc) |
+
+Channel-specific configuration for a template. One ChannelTemplate record exists per supported channel per Template. Stores channel-specific rendering parameters such as email subject lines, SMS sender IDs, push notification titles, and document paper sizes.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `channelTemplateId` | `string` | Yes | — | Unique identifier for this channel-template binding. |
+| `templateId` | `string` | Yes | — | Reference to the parent Template. |
+| `channel` | [`ChannelType`](./common/enums/ChannelType) | Yes | — | The delivery channel this configuration applies to. Must not be AUTO. |
+| `isActive` | `boolean` | No | `true` | Whether this channel configuration is currently active. Inactive channels are skipped by the AUTO dispatcher. |
+| `emailConfig` | `EmailChannelConfig` _(inline record)_ _(optional)_ | No | `null` | Email-specific configuration. Required when channel is EMAIL. |
+| `smsConfig` | `SmsChannelConfig` _(inline record)_ _(optional)_ | No | `null` | SMS-specific configuration. Required when channel is SMS. |
+| `pushConfig` | `PushChannelConfig` _(inline record)_ _(optional)_ | No | `null` | Push notification-specific configuration. Required when channel is PUSH. |
+| `documentConfig` | `DocumentChannelConfig` _(inline record)_ _(optional)_ | No | `null` | Document generation configuration. Required when channel is DOCUMENT. |
+| `postConfig` | `PostChannelConfig` _(inline record)_ _(optional)_ | No | `null` | Postal delivery configuration. Required when channel is POST. |
+
+## Nested Types
+
+### EmailChannelConfig {#emailchannelconfig}
+
+Configuration specific to email delivery.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `subjectLine` | `string` | Yes | — | Email subject line. May include Handlebars-style template variables, e.g. 'Your &#123;&#123;month&#125;&#125; statement is ready'. |
+| `preheaderText` | `string` _(optional)_ | No | `null` | Preview text shown by email clients before the message is opened. |
+| `fromName` | `string` | Yes | — | Display name in the From field, e.g. 'First National Bank'. |
+| `fromAddress` | `string` | Yes | — | Sending email address, e.g. 'statements@bank.co.uk'. |
+| `replyToAddress` | `string` _(optional)_ | No | `null` | Reply-To address if different from fromAddress. |
+| `hasAttachment` | `boolean` | No | `false` | Whether this template generates an attachment (e.g. a PDF statement). |
+| `attachmentDescription` | `string` _(optional)_ | No | `null` | Description of the attachment, e.g. 'PDF Statement'. |
+
+### SmsChannelConfig {#smschannelconfig}
+
+Configuration specific to SMS delivery.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `senderId` | `string` | Yes | — | Alphanumeric sender ID shown to recipient, e.g. 'FirstNatl'. Max 11 characters. |
+| `maxLength` | `int` | No | `160` | Maximum character length for the SMS body. Multi-part SMS will be split at this boundary. |
+| `allowMultiPart` | `boolean` | No | `false` | Whether multi-part (concatenated) SMS is permitted for this template. |
+
+### PushChannelConfig {#pushchannelconfig}
+
+Configuration specific to push notification delivery.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `defaultTitle` | `string` | Yes | — | Default notification title shown on the device lock screen. |
+| `sound` | `string` _(optional)_ | No | `null` | Sound to play on delivery, e.g. 'default' or a custom sound name. |
+| `badge` | `int` _(optional)_ | No | `null` | App badge count to set on delivery. Null means do not change. |
+| `category` | `string` _(optional)_ | No | `null` | iOS notification category for actionable notifications. |
+| `deepLinkTemplate` | `string` _(optional)_ | No | `null` | Deep link URI template for in-app navigation, e.g. 'bankapp://accounts/&#123;&#123;accountId&#125;&#125;/statement'. |
+| `collapseKey` | `string` _(optional)_ | No | `null` | Collapse key to replace unread notifications of the same type on Android. |
+
+### DocumentChannelConfig {#documentchannelconfig}
+
+Configuration for document generation (PDF statements, letters).
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `paperSize` | `PaperSize` _(inline enum)_ | No | `"A4"` | Paper size for printed documents. |
+| `isEncrypted` | `boolean` | No | `false` | Whether the generated document should be password-protected. |
+| `documentType` | `string` _(optional)_ | No | `null` | Document classification for archival, e.g. 'STATEMENT', 'LETTER', 'NOTICE'. |
+| `archiveRetentionYears` | `int` _(optional)_ | No | `null` | Number of years this document type must be retained for regulatory compliance. |
+
+### PostChannelConfig {#postchannelconfig}
+
+Configuration for physical postal delivery.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `printProvider` | `string` _(optional)_ | No | `null` | Identifier for the print and mail provider. |
+| `mailClass` | `MailClass` _(inline enum)_ | No | `"SECOND_CLASS"` | Royal Mail or equivalent postal class. |
+| `includeReplyEnvelope` | `boolean` | No | `false` | Whether a reply envelope should be included with the mailing. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

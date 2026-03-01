@@ -1,0 +1,77 @@
+---
+id: com-bank-schemas-payloads-statements-currentaccountstatementpayload
+title: CurrentAccountStatementPayload
+description: "Payload for a current account or basic bank account statement. Aligned with UK Open Banking OBReadStatement2 and CASS (Current Account Switch Service) statement data requirements."
+tags: [CurrentAccountStatementPayload, v1.0.0, Payloads / Statements]
+---
+
+# CurrentAccountStatementPayload
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.payloads.statements` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/payloads/statements/CurrentAccountStatementPayload.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/payloads/statements/CurrentAccountStatementPayload.avsc) |
+
+Payload for a current account or basic bank account statement. Aligned with UK Open Banking OBReadStatement2 and CASS (Current Account Switch Service) statement data requirements.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `statementId` | `string` | Yes | — | Unique identifier for this statement. |
+| `accountId` | `string` | Yes | — | Reference to the Account this statement covers. |
+| `sortCode` | `string` | Yes | — | Account sort code (6 digits). |
+| `accountNumber` | `string` | Yes | — | Account number (8 digits). |
+| `iban` | `string` _(optional)_ | No | `null` | IBAN if available. |
+| `accountHolderName` | `string` | Yes | — | Full name of the primary account holder as it appears on the account. |
+| `productName` | `string` | Yes | — | Product name as displayed to the customer, e.g. 'Premier Current Account'. |
+| `statementDate` | `string` | Yes | — | ISO 8601 date the statement was generated: YYYY-MM-DD. |
+| `periodStartDate` | `string` | Yes | — | ISO 8601 start date of the statement period. |
+| `periodEndDate` | `string` | Yes | — | ISO 8601 end date of the statement period. |
+| `openingBalance` | [`Money`](./common/Money) | Yes | — | Account balance at the start of the statement period. |
+| `closingBalance` | [`Money`](./common/Money) | Yes | — | Account balance at the end of the statement period. |
+| `totalCredits` | [`Money`](./common/Money) | Yes | — | Total of all credit entries in the statement period. |
+| `totalDebits` | [`Money`](./common/Money) | Yes | — | Total of all debit entries in the statement period. |
+| `availableBalance` | [`Money`](./common/Money) _(optional)_ | No | `null` | Available balance including any arranged overdraft at statement date. |
+| `arrangedOverdraftLimit` | [`Money`](./common/Money) _(optional)_ | No | `null` | Agreed arranged overdraft limit. |
+| `arrangedOverdraftUsed` | [`Money`](./common/Money) _(optional)_ | No | `null` | Amount of arranged overdraft used during the period. |
+| `unarrangedOverdraftUsed` | [`Money`](./common/Money) _(optional)_ | No | `null` | Maximum unarranged overdraft amount used during the period. |
+| `interestCharged` | [`Money`](./common/Money) _(optional)_ | No | `null` | Total overdraft or debit interest charged in the period. |
+| `interestEarned` | [`Money`](./common/Money) _(optional)_ | No | `null` | Total credit interest earned in the period, if applicable. |
+| `feesCharged` | [`Money`](./common/Money) _(optional)_ | No | `null` | Total fees charged in the period. |
+| `transactions` | array of `StatementTransaction` _(inline record)_ | No | `[]` | List of transactions in this statement period. |
+| `correspondenceAddress` | [`Address`](./common/Address) _(optional)_ | No | `null` | Address for printed statement delivery. Required when channel is POST or DOCUMENT. |
+
+## Nested Types
+
+### StatementTransaction {#statementtransaction}
+
+A summarised transaction entry for inclusion in a statement payload.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `transactionId` | `string` | Yes | — | Reference to the full Transaction record. |
+| `bookingDate` | `string` | Yes | — | ISO 8601 date the transaction was posted. |
+| `valueDate` | `string` _(optional)_ | No | `null` | ISO 8601 value date if different from booking date. |
+| `description` | `string` | Yes | — | Transaction description as displayed on the statement. |
+| `creditDebitIndicator` | [`CreditDebitIndicator`](./common/enums/CreditDebitIndicator) | Yes | — | Whether this entry credits or debits the account. |
+| `amount` | [`Money`](./common/Money) | Yes | — | Transaction amount. |
+| `runningBalance` | [`Money`](./common/Money) _(optional)_ | No | `null` | Account balance after this transaction. |
+| `reference` | `string` _(optional)_ | No | `null` | Payment reference. |
+| `category` | `string` _(optional)_ | No | `null` | Spending category for analysis purposes, e.g. 'GROCERIES', 'TRANSPORT'. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [CommunicationEvent](./events/CommunicationEvent) | `com.bank.schemas.events` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

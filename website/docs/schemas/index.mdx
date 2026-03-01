@@ -1,0 +1,112 @@
+---
+id: index
+title: Schema Catalogue
+description: All Avro schemas for the banking communications platform
+---
+
+# Schema Catalogue
+
+Complete reference for all 48 Avro schemas in the communications platform.
+
+## Common Enums
+
+| Schema | Type | Version | Status | Description |
+|--------|------|---------|--------|-------------|
+| [AccountStatus](./common/enums/AccountStatus) | `enum` | `1.0.0` | ACTIVE | Account lifecycle status aligned with UK Open Banking OBAccountStatus1Code |
+| [BalanceType](./common/enums/BalanceType) | `enum` | `1.0.0` | ACTIVE | Balance classification aligned with UK Open Banking OBBalanceType1Code and ISO 20022 BalanceType12Code |
+| [ChannelType](./common/enums/ChannelType) | `enum` | `1.0.0` | ACTIVE | Supported communication delivery channels |
+| [CommunicationEventType](./common/enums/CommunicationEventType) | `enum` | `1.0.0` | ACTIVE | Classifies the purpose and content of a communication event |
+| [CreditDebitIndicator](./common/enums/CreditDebitIndicator) | `enum` | `1.0.0` | ACTIVE | Indicates whether a monetary value represents a credit or debit |
+| [FeeType](./common/enums/FeeType) | `enum` | `1.0.0` | ACTIVE | Classification of fee types |
+| [InterestRateType](./common/enums/InterestRateType) | `enum` | `1.0.0` | ACTIVE | Classification of interest rate structure |
+| [MessagePriority](./common/enums/MessagePriority) | `enum` | `1.0.0` | ACTIVE | Priority level influencing queuing and delivery speed for a communication event |
+| [MessageStatus](./common/enums/MessageStatus) | `enum` | `1.0.0` | ACTIVE | Lifecycle status of a communication message |
+| [PartyType](./common/enums/PartyType) | `enum` | `1.0.0` | ACTIVE | Classification of a party |
+| [ProductType](./common/enums/ProductType) | `enum` | `1.0.0` | ACTIVE | Product classification aligned with UK Open Banking OBExternalAccountSubType1Code and extended for investment, pension, and commercial products |
+| [StatementFrequency](./common/enums/StatementFrequency) | `enum` | `1.0.0` | ACTIVE | Frequency at which statements or charges are generated or applied |
+| [TemplateStatus](./common/enums/TemplateStatus) | `enum` | `1.0.0` | ACTIVE | Lifecycle status of a communication template |
+| [TransactionStatus](./common/enums/TransactionStatus) | `enum` | `1.0.0` | ACTIVE | Transaction status aligned with UK Open Banking OBEntryStatus1Code and ISO 20022 TransactionIndividualStatus1Code |
+
+## Common Types
+
+| Schema | Type | Version | Status | Description |
+|--------|------|---------|--------|-------------|
+| [Address](./common/Address) | `record` | `1.0.0` | ACTIVE | Postal address aligned with ISO 20022 PostalAddress24 and UK Royal Mail addressing standards |
+| [ContactDetails](./common/ContactDetails) | `record` | `1.0.0` | ACTIVE | Contact information for a party |
+| [Identifier](./common/Identifier) | `record` | `1.0.0` | ACTIVE | A formal identifier for a party or entity |
+| [Money](./common/Money) | `record` | `1.0.1` | ACTIVE | Monetary amount with ISO 4217 currency code |
+
+## Core Entities
+
+| Schema | Type | Version | Status | Description |
+|--------|------|---------|--------|-------------|
+| [Account](./core/Account) | `record` | `1.0.0` | ACTIVE | A bank account instance held by a party |
+| [Balance](./core/Balance) | `record` | `1.0.0` | ACTIVE | Account balance at a point in time |
+| [Client](./core/Client) | `record` | `1.0.0` | ACTIVE | Registered upstream client application authorised to produce CommunicationEvents |
+| [Fees](./core/Fees) | `record` | `1.0.0` | ACTIVE | Fee definition applicable to a product |
+| [FxFees](./core/FxFees) | `record` | `1.0.0` | ACTIVE | Foreign exchange fee definitions for a product |
+| [InterestCharge](./core/InterestCharge) | `record` | `1.0.0` | ACTIVE | A record of interest charged or credited to an account for a specific period |
+| [InterestRate](./core/InterestRate) | `record` | `1.0.0` | ACTIVE | Interest rate definition applicable to a product or account |
+| [Party](./core/Party) | `record` | `1.0.0` | ACTIVE | A party is any individual or organisation that has a relationship with the bank |
+| [Product](./core/Product) | `record` | `1.0.0` | ACTIVE | A bank product definition |
+| [ProductHolding](./core/ProductHolding) | `record` | `1.0.0` | ACTIVE | Links a party to a product and account, capturing the role of the party in that relationship |
+| [Transaction](./core/Transaction) | `record` | `1.0.0` | ACTIVE | A debit or credit entry on an account |
+| [Workload](./core/Workload) | `record` | `1.0.0` | ACTIVE | A named workload belonging to a registered Client |
+
+## Reference
+
+| Schema | Type | Version | Status | Description |
+|--------|------|---------|--------|-------------|
+| [ChannelTemplate](./reference/ChannelTemplate) | `record` | `1.0.0` | ACTIVE | Channel-specific configuration for a template |
+| [CommunicationPreferences](./reference/CommunicationPreferences) | `record` | `1.0.0` | ACTIVE | Customer communication preferences determining channel selection for each event type and product |
+| [Template](./reference/Template) | `record` | `1.0.0` | ACTIVE | A communication template definition describing a reusable content structure for a specific event type and channel |
+
+## Events
+
+| Schema | Type | Version | Status | Description |
+|--------|------|---------|--------|-------------|
+| [CommunicationEvent](./events/CommunicationEvent) | `record` | `3.0.0` | ACTIVE | Top-level event envelope for all bank communications |
+| [CommunicationEventResponse](./events/CommunicationEventResponse) | `record` | `2.0.0` | ACTIVE | Status update event produced by the communication dispatch service after attempting delivery of a CommunicationEvent |
+
+## Payloads / Statements
+
+| Schema | Type | Version | Status | Description |
+|--------|------|---------|--------|-------------|
+| [CommercialStatementPayload](./payloads/statements/CommercialStatementPayload) | `record` | `1.0.0` | ACTIVE | Payload for a commercial or business banking account statement |
+| [CreditCardStatementPayload](./payloads/statements/CreditCardStatementPayload) | `record` | `1.0.0` | ACTIVE | Payload for a credit card monthly statement |
+| [CurrentAccountStatementPayload](./payloads/statements/CurrentAccountStatementPayload) | `record` | `1.0.0` | ACTIVE | Payload for a current account or basic bank account statement |
+| [InvestmentStatementPayload](./payloads/statements/InvestmentStatementPayload) | `record` | `1.0.0` | ACTIVE | Payload for an investment account or Stocks and Shares ISA periodic statement |
+| [LoanStatementPayload](./payloads/statements/LoanStatementPayload) | `record` | `1.0.0` | ACTIVE | Payload for a personal or commercial loan statement |
+| [MortgageStatementPayload](./payloads/statements/MortgageStatementPayload) | `record` | `1.0.0` | ACTIVE | Payload for a residential or buy-to-let mortgage annual or periodic statement |
+| [PensionStatementPayload](./payloads/statements/PensionStatementPayload) | `record` | `1.0.0` | ACTIVE | Payload for a pension annual benefit statement |
+
+## Payloads / Letters
+
+| Schema | Type | Version | Status | Description |
+|--------|------|---------|--------|-------------|
+| [BankLetterPayload](./payloads/letters/BankLetterPayload) | `record` | `1.0.0` | ACTIVE | Payload for a general bank letter |
+| [InterestRateChangeLetterPayload](./payloads/letters/InterestRateChangeLetterPayload) | `record` | `1.0.0` | ACTIVE | Payload for a letter notifying a customer of a change to their interest rate |
+
+## Payloads / Emails
+
+| Schema | Type | Version | Status | Description |
+|--------|------|---------|--------|-------------|
+| [InterestRateChangeEmailPayload](./payloads/emails/InterestRateChangeEmailPayload) | `record` | `1.0.0` | ACTIVE | Payload for an email notification of an interest rate change |
+
+## Payloads / SMS
+
+| Schema | Type | Version | Status | Description |
+|--------|------|---------|--------|-------------|
+| [FraudNotificationSmsPayload](./payloads/sms/FraudNotificationSmsPayload) | `record` | `1.0.0` | ACTIVE | Payload for an SMS fraud or suspicious activity alert |
+
+## Payloads / Push
+
+| Schema | Type | Version | Status | Description |
+|--------|------|---------|--------|-------------|
+| [PaymentPushNotificationPayload](./payloads/push/PaymentPushNotificationPayload) | `record` | `1.0.0` | ACTIVE | Payload for a mobile push notification related to a payment event |
+
+## Channels
+
+| Schema | Type | Version | Status | Description |
+|--------|------|---------|--------|-------------|
+| [AutoChannelDispatch](./channels/AutoChannelDispatch) | `record` | `1.0.0` | ACTIVE | Describes the outcome of an AUTO channel dispatch attempt |

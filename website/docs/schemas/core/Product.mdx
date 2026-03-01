@@ -1,0 +1,41 @@
+---
+id: com-bank-schemas-core-product
+title: Product
+description: "A bank product definition. Aligned with UK Open Banking OBProduct2 and extended for investment, pension, and commercial products."
+tags: [Product, v1.0.0, Core Entities]
+---
+
+# Product
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.core` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/core/Product.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/core/Product.avsc) |
+
+A bank product definition. Aligned with UK Open Banking OBProduct2 and extended for investment, pension, and commercial products.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `productId` | `string` | Yes | — | Unique identifier for this product definition. |
+| `productType` | [`ProductType`](./common/enums/ProductType) | Yes | — | Classification of the product. |
+| `name` | `string` | Yes | — | Product display name. |
+| `description` | `string` _(optional)_ | No | `null` | Human-readable product description. |
+| `marketSegment` | `MarketSegment` _(inline enum)_ | No | `"PERSONAL"` | Target market segment for this product. |
+| `primaryProductId` | `string` _(optional)_ | No | `null` | Reference to the parent product if this is a variant or sub-product. |
+| `currency` | `string` | Yes | — | Primary ISO 4217 currency code for this product. |
+| `isActive` | `boolean` | No | `true` | Whether this product is currently available for new applications. |
+| `availableFrom` | `string` _(optional)_ | No | `null` | ISO 8601 date from which this product became or becomes available. |
+| `availableTo` | `string` _(optional)_ | No | `null` | ISO 8601 date after which this product is no longer available. |
+| `regulatoryProductId` | `string` _(optional)_ | No | `null` | Regulatory product reference, e.g. FCA product reference number. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

@@ -1,0 +1,48 @@
+---
+id: com-bank-schemas-common-enums-channeltype
+title: ChannelType
+description: "Supported communication delivery channels. AUTO is a meta-channel that cascades across real channels based on template availability and customer preferences."
+tags: [ChannelType, v1.0.0, Common Enums]
+---
+
+# ChannelType
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.common.enums` |
+| **Type** | `enum` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/common/enums/ChannelType.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/common/enums/ChannelType.avsc) |
+
+Supported communication delivery channels. AUTO is a meta-channel that cascades across real channels based on template availability and customer preferences.
+
+## Symbols
+
+| Symbol |
+|--------|
+| `EMAIL` |
+| `SMS` |
+| `PUSH` |
+| `IN_APP` |
+| `DOCUMENT` |
+| `POST` |
+| `AUTO` |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [AutoChannelDispatch](./channels/AutoChannelDispatch) | `com.bank.schemas.channels` |
+| [CommunicationEvent](./events/CommunicationEvent) | `com.bank.schemas.events` |
+| [CommunicationEventResponse](./events/CommunicationEventResponse) | `com.bank.schemas.events` |
+| [ChannelTemplate](./reference/ChannelTemplate) | `com.bank.schemas.reference` |
+| [CommunicationPreferences](./reference/CommunicationPreferences) | `com.bank.schemas.reference` |
+| [Template](./reference/Template) | `com.bank.schemas.reference` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

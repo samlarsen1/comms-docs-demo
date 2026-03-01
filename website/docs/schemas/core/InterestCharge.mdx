@@ -1,0 +1,43 @@
+---
+id: com-bank-schemas-core-interestcharge
+title: InterestCharge
+description: "A record of interest charged or credited to an account for a specific period. Used in statements and regulatory reporting. Aligned with ISO 20022 TransactionInterest4."
+tags: [InterestCharge, v1.0.0, Core Entities]
+---
+
+# InterestCharge
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.core` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/core/InterestCharge.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/core/InterestCharge.avsc) |
+
+A record of interest charged or credited to an account for a specific period. Used in statements and regulatory reporting. Aligned with ISO 20022 TransactionInterest4.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `chargeId` | `string` | Yes | — | Unique identifier for this interest charge record. |
+| `accountId` | `string` | Yes | — | Reference to the Account this charge applies to. |
+| `rateId` | `string` _(optional)_ | No | `null` | Reference to the InterestRate definition applied. |
+| `direction` | `com.bank.schemas.common.enums.InterestDirection` | Yes | — | Whether this is interest earned (CREDIT) or interest charged (DEBIT). |
+| `periodStartDate` | `string` | Yes | — | ISO 8601 start date of the interest calculation period. |
+| `periodEndDate` | `string` | Yes | — | ISO 8601 end date of the interest calculation period. |
+| `averageBalance` | [`Money`](./common/Money) _(optional)_ | No | `null` | Average balance over the period used for interest calculation. |
+| `rateAppliedPercent` | `string` | Yes | — | Actual interest rate applied during this period as a decimal string. |
+| `rateType` | [`InterestRateType`](./common/enums/InterestRateType) | Yes | — | Structure of the rate that was applied. |
+| `chargedAmount` | [`Money`](./common/Money) | Yes | — | Total interest amount charged or credited. |
+| `taxDeducted` | [`Money`](./common/Money) _(optional)_ | No | `null` | Tax withheld at source, if applicable (e.g. basic rate tax on savings interest). |
+| `postedDateTime` | `long` _(timestamp-millis, UTC ms)_ | Yes | — | UTC timestamp when the interest was posted to the account. |
+| `transactionId` | `string` _(optional)_ | No | `null` | Reference to the Transaction record created when interest was posted. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

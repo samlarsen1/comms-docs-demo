@@ -1,0 +1,73 @@
+---
+id: com-bank-schemas-payloads-statements-loanstatementpayload
+title: LoanStatementPayload
+description: "Payload for a personal or commercial loan statement. Aligned with UK Open Banking OBReadStatement2 consumer credit rules and FCA consumer credit disclosure requirements under CONC."
+tags: [LoanStatementPayload, v1.0.0, Payloads / Statements]
+---
+
+# LoanStatementPayload
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.payloads.statements` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/payloads/statements/LoanStatementPayload.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/payloads/statements/LoanStatementPayload.avsc) |
+
+Payload for a personal or commercial loan statement. Aligned with UK Open Banking OBReadStatement2 consumer credit rules and FCA consumer credit disclosure requirements under CONC.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `statementId` | `string` | Yes | — | Unique identifier for this statement. |
+| `accountId` | `string` | Yes | — | Reference to the loan Account. |
+| `loanReference` | `string` | Yes | — | Bank's loan reference number. |
+| `accountHolderName` | `string` | Yes | — | Name of the primary loan holder. |
+| `productName` | `string` | Yes | — | Loan product name, e.g. 'Personal Loan', 'Home Improvement Loan'. |
+| `loanPurpose` | `string` _(optional)_ | No | `null` | Stated purpose of the loan, e.g. 'Debt Consolidation', 'Vehicle Purchase'. |
+| `statementDate` | `string` | Yes | — | ISO 8601 date the statement was generated. |
+| `periodStartDate` | `string` | Yes | — | ISO 8601 start date of the statement period. |
+| `periodEndDate` | `string` | Yes | — | ISO 8601 end date of the statement period. |
+| `originalLoanAmount` | [`Money`](./common/Money) | Yes | — | Original loan amount drawn down. |
+| `outstandingBalance` | [`Money`](./common/Money) | Yes | — | Outstanding loan balance at end of period. |
+| `annualInterestRatePercent` | `string` | Yes | — | Annual interest rate as a decimal string. |
+| `apr` | `string` | Yes | — | Annual Percentage Rate including all costs as a decimal string. |
+| `interestRateType` | [`InterestRateType`](./common/enums/InterestRateType) | Yes | — | Structure of the interest rate (typically FIXED for personal loans). |
+| `monthlyPaymentAmount` | [`Money`](./common/Money) | Yes | — | Monthly instalment amount. |
+| `nextPaymentDate` | `string` | Yes | — | ISO 8601 date of the next scheduled payment. |
+| `nextPaymentAmount` | [`Money`](./common/Money) | Yes | — | Amount due on the next payment date. |
+| `remainingTermMonths` | `int` | Yes | — | Number of monthly instalments remaining. |
+| `totalPaidToDate` | [`Money`](./common/Money) | Yes | — | Total amount paid since loan inception. |
+| `totalInterestPaidToDate` | [`Money`](./common/Money) | Yes | — | Total interest paid since loan inception. |
+| `interestChargedThisPeriod` | [`Money`](./common/Money) | Yes | — | Interest charged during this statement period. |
+| `capitalRepaidThisPeriod` | [`Money`](./common/Money) | Yes | — | Capital repaid during this statement period. |
+| `feesChargedThisPeriod` | [`Money`](./common/Money) _(optional)_ | No | `null` | Fees charged during the period, e.g. late payment fees. |
+| `settlementFigure` | [`Money`](./common/Money) _(optional)_ | No | `null` | Amount required to settle the loan in full today, including any early repayment charge. |
+| `earlyRepaymentCharge` | [`Money`](./common/Money) _(optional)_ | No | `null` | Early repayment charge applicable if loan is settled today. |
+| `arrears` | `ArrearsDetails` _(inline record)_ _(optional)_ | No | `null` | Arrears information if the account is in arrears. |
+| `transactions` | array of `com.bank.schemas.payloads.statements.StatementTransaction` | No | `[]` | Transactions during the statement period. |
+| `correspondenceAddress` | [`Address`](./common/Address) _(optional)_ | No | `null` | Address for printed statement delivery. |
+
+## Nested Types
+
+### ArrearsDetails {#arrearsdetails}
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `arrearsAmount` | [`Money`](./common/Money) | Yes | — | Total amount in arrears. |
+| `monthsInArrears` | `int` | Yes | — | Number of months the account is in arrears. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [CommunicationEvent](./events/CommunicationEvent) | `com.bank.schemas.events` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

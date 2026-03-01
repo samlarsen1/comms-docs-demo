@@ -1,0 +1,87 @@
+---
+id: com-bank-schemas-core-transaction
+title: Transaction
+description: "A debit or credit entry on an account. Aligned with UK Open Banking OBTransaction6 and ISO 20022 ReportEntry10. Merchant data draws on ISO 8583 merchant category codes."
+tags: [Transaction, v1.0.0, Core Entities]
+---
+
+# Transaction
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.core` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/core/Transaction.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/core/Transaction.avsc) |
+
+A debit or credit entry on an account. Aligned with UK Open Banking OBTransaction6 and ISO 20022 ReportEntry10. Merchant data draws on ISO 8583 merchant category codes.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `transactionId` | `string` | Yes | — | Bank-assigned UUID uniquely identifying this transaction. |
+| `accountId` | `string` | Yes | — | Reference to the Account this transaction belongs to. |
+| `creditDebitIndicator` | [`CreditDebitIndicator`](./common/enums/CreditDebitIndicator) | Yes | — | Whether this transaction credits or debits the account. |
+| `status` | [`TransactionStatus`](./common/enums/TransactionStatus) | Yes | — | Processing status of the transaction. |
+| `bookingDateTime` | `long` _(timestamp-millis, UTC ms)_ | Yes | — | UTC timestamp when the transaction was posted to the account ledger. |
+| `valueDateTime` | `long` _(timestamp-millis, UTC ms)_ _(optional)_ | No | `null` | UTC timestamp for interest and value calculation purposes. May differ from bookingDateTime. |
+| `amount` | [`Money`](./common/Money) | Yes | — | Transaction amount in the account currency. |
+| `chargeAmount` | [`Money`](./common/Money) _(optional)_ | No | `null` | Fee or charge associated with this transaction, if applicable. |
+| `currencyExchange` | `CurrencyExchange` _(inline record)_ _(optional)_ | No | `null` | Foreign exchange details for cross-currency transactions. |
+| `bankTransactionCode` | `BankTransactionCode` _(inline record)_ _(optional)_ | No | `null` | ISO 20022 bank transaction code classification. |
+| `proprietaryCode` | `string` _(optional)_ | No | `null` | Bank-proprietary transaction type code. |
+| `merchantDetails` | `MerchantDetails` _(inline record)_ _(optional)_ | No | `null` | Merchant information for card-based transactions. |
+| `remittanceInformation` | `RemittanceInformation` _(inline record)_ _(optional)_ | No | `null` | Payment reference or description. |
+| `transactionReference` | `string` _(optional)_ | No | `null` | Bank's internal transaction reference number. |
+| `runningBalance` | [`Money`](./common/Money) _(optional)_ | No | `null` | Account balance immediately after this transaction was applied. |
+
+## Nested Types
+
+### CurrencyExchange {#currencyexchange}
+
+Foreign currency exchange details where the transaction originated in a different currency. Aligned with ISO 20022 CurrencyExchange5.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `sourceCurrency` | `string` | Yes | — | ISO 4217 currency code the transaction originated in. |
+| `targetCurrency` | `string` | Yes | — | ISO 4217 currency code of the account. |
+| `exchangeRate` | `string` | Yes | — | Exchange rate applied as a decimal string. |
+| `originalAmount` | [`Money`](./common/Money) | Yes | — | Original amount in the source currency. |
+| `quotedDateTime` | `long` _(timestamp-millis, UTC ms)_ _(optional)_ | No | `null` | UTC timestamp when the exchange rate was quoted. |
+
+### BankTransactionCode {#banktransactioncode}
+
+Standardised transaction classification. Aligned with ISO 20022 BankTransactionCodeStructure4.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `domain` | `string` | Yes | — | Domain code, e.g. 'Payments', 'Loans'. |
+| `family` | `string` | Yes | — | Family code within the domain. |
+| `subFamily` | `string` | Yes | — | Sub-family code within the family. |
+
+### MerchantDetails {#merchantdetails}
+
+Details of the merchant where a card transaction occurred.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `merchantName` | `string` _(optional)_ | No | `null` | Trading name of the merchant. |
+| `merchantCategoryCode` | `string` _(optional)_ | No | `null` | ISO 8583 Merchant Category Code (MCC), e.g. '5411' for grocery stores. |
+
+### RemittanceInformation {#remittanceinformation}
+
+Payment reference details. Aligned with ISO 20022 RemittanceInformation16.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `unstructured` | `string` _(optional)_ | No | `null` | Free-text payment reference or description. |
+| `reference` | `string` _(optional)_ | No | `null` | Structured payment reference, e.g. invoice number. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

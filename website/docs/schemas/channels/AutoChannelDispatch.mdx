@@ -1,0 +1,76 @@
+---
+id: com-bank-schemas-channels-autochanneldispatch
+title: AutoChannelDispatch
+description: "Describes the outcome of an AUTO channel dispatch attempt. When a CommunicationEvent has channel=AUTO, the dispatcher resolves the delivery channel(s) at runtime by: (1) loading the customer's CommunicationPreferences for the given eventType and productType; (2) filtering channels where ChannelConsent is given; (3) for each preferred channel in order, checking whether an ACTIVE Template exists that supports the payload type and channel; (4) attempting delivery and cascading to the next channel on failure if cascade is enabled. This record captures the full resolution and attempt history for audit, debugging, and retry purposes."
+tags: [AutoChannelDispatch, v1.0.0, Channels]
+---
+
+# AutoChannelDispatch
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.channels` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/channels/AutoChannelDispatch.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/channels/AutoChannelDispatch.avsc) |
+
+Describes the outcome of an AUTO channel dispatch attempt. When a CommunicationEvent has channel=AUTO, the dispatcher resolves the delivery channel(s) at runtime by: (1) loading the customer's CommunicationPreferences for the given eventType and productType; (2) filtering channels where ChannelConsent is given; (3) for each preferred channel in order, checking whether an ACTIVE Template exists that supports the payload type and channel; (4) attempting delivery and cascading to the next channel on failure if cascade is enabled. This record captures the full resolution and attempt history for audit, debugging, and retry purposes.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `dispatchId` | `string` | Yes | — | Unique identifier for this auto dispatch attempt. |
+| `originalEventId` | `string` | Yes | — | The eventId of the originating CommunicationEvent with channel=AUTO. |
+| `correlationId` | `string` _(optional)_ | No | `null` | Propagated correlation ID. |
+| `partyId` | `string` | Yes | — | Party for whom channels are being resolved. |
+| `eventType` | [`CommunicationEventType`](./common/enums/CommunicationEventType) | Yes | — | Communication event type being dispatched. |
+| `payloadType` | `string` | Yes | — | Fully qualified Avro type name of the payload, used for template compatibility matching, e.g. 'com.bank.schemas.payloads.statements.CurrentAccountStatementPayload'. |
+| `cascadeConfig` | `CascadeConfig` _(inline record)_ | Yes | — | Cascade behaviour configuration for this dispatch. |
+| `resolvedChannelOrder` | array of [`ChannelType`](./common/enums/ChannelType) | Yes | — | The final ordered list of channels the dispatcher resolved to attempt, after applying preferences, consent, and template availability checks. |
+| `channelAttempts` | array of `ChannelAttempt` _(inline record)_ | No | `[]` | Ordered list of channel delivery attempts made during the cascade. |
+| `finalStatus` | [`MessageStatus`](./common/enums/MessageStatus) | Yes | — | Overall final status of the AUTO dispatch. DELIVERED if any channel succeeded. FAILED if all channels failed. OPTED_OUT if customer has no consented channels. |
+| `successfulChannel` | [`ChannelType`](./common/enums/ChannelType) _(optional)_ | No | `null` | The channel on which delivery ultimately succeeded. Null if delivery failed on all channels. |
+| `dispatchStartTimestamp` | `long` _(timestamp-millis, UTC ms)_ | Yes | — | UTC timestamp when the AUTO dispatch process started. |
+| `dispatchEndTimestamp` | `long` _(timestamp-millis, UTC ms)_ | Yes | — | UTC timestamp when the AUTO dispatch process completed. |
+
+## Nested Types
+
+### CascadeConfig {#cascadeconfig}
+
+Configuration governing cascade behaviour for this AUTO dispatch.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `stopOnFirstSuccess` | `boolean` | No | `true` | If true, cascade stops after the first successful delivery. If false, the event is delivered to all available channels (e.g. for regulatory documents that must be delivered everywhere). |
+| `respectCustomerPreferences` | `boolean` | No | `true` | If true, the customer's CommunicationPreferences preferredChannelOrder is used to determine cascade order. If false, the fallbackChannelOrder is used directly. |
+| `fallbackChannelOrder` | array of [`ChannelType`](./common/enums/ChannelType) | No | `["EMAIL","SMS","PUSH","POST"]` | Channel order to use if respectCustomerPreferences is false, or if the customer has no preferences set for this event type. Must not contain AUTO. |
+| `requireTemplateMatch` | `boolean` | No | `true` | If true, a channel is skipped if no active template exists for the payload type on that channel. If false, dispatches without a template (raw payload delivery). |
+| `maxCascadeDepth` | `int` | No | `3` | Maximum number of channels to attempt in the cascade. Prevents excessive delivery attempts. |
+| `retryAttemptsPerChannel` | `int` | No | `2` | Number of retry attempts per channel before cascading to the next. |
+| `retryDelaySeconds` | `int` | No | `60` | Delay in seconds between retry attempts on the same channel. |
+| `skipOptedOutChannels` | `boolean` | No | `true` | If true, channels for which the customer has not given consent are silently skipped. If false, an OPTED_OUT attempt is logged. |
+
+### ChannelAttempt {#channelattempt}
+
+Result of a single delivery attempt on a specific channel.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `attemptSequence` | `int` | Yes | — | Sequence number of this attempt (1-based) in the cascade. |
+| `channel` | [`ChannelType`](./common/enums/ChannelType) | Yes | — | Channel on which delivery was attempted. |
+| `templateId` | `string` _(optional)_ | No | `null` | Template UUID used for this attempt. |
+| `templateCode` | `string` _(optional)_ | No | `null` | Template code used for this attempt. |
+| `skipReason` | `string` _(optional)_ | No | `null` | If this channel was skipped without attempting delivery, the reason. E.g. 'NO_TEMPLATE', 'OPTED_OUT', 'NO_CONTACT_DETAIL', 'CONSENT_NOT_GIVEN'. |
+| `attemptTimestamp` | `long` _(timestamp-millis, UTC ms)_ | Yes | — | UTC timestamp of this delivery attempt. |
+| `status` | [`MessageStatus`](./common/enums/MessageStatus) | Yes | — | Status of this delivery attempt. |
+| `statusDetail` | `string` _(optional)_ | No | `null` | Detail of the status, e.g. gateway error message. |
+| `responseEventId` | `string` _(optional)_ | No | `null` | ID of the CommunicationEventResponse produced for this attempt. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

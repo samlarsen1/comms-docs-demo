@@ -1,0 +1,65 @@
+---
+id: com-bank-schemas-payloads-statements-mortgagestatementpayload
+title: MortgageStatementPayload
+description: "Payload for a residential or buy-to-let mortgage annual or periodic statement. Aligned with FCA MCOB (Mortgage Conduct of Business) disclosure requirements and UK Finance mortgage statement standards."
+tags: [MortgageStatementPayload, v1.0.0, Payloads / Statements]
+---
+
+# MortgageStatementPayload
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.payloads.statements` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/payloads/statements/MortgageStatementPayload.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/payloads/statements/MortgageStatementPayload.avsc) |
+
+Payload for a residential or buy-to-let mortgage annual or periodic statement. Aligned with FCA MCOB (Mortgage Conduct of Business) disclosure requirements and UK Finance mortgage statement standards.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `statementId` | `string` | Yes | — | Unique identifier for this statement. |
+| `accountId` | `string` | Yes | — | Reference to the mortgage Account. |
+| `mortgageReference` | `string` | Yes | — | Bank's mortgage reference number. |
+| `accountHolderNames` | array of `string` | Yes | — | Names of all mortgage holders (primary and joint). |
+| `productName` | `string` | Yes | — | Mortgage product name, e.g. '2-Year Fixed Rate Mortgage'. |
+| `mortgageType` | `MortgageType` _(inline enum)_ | Yes | — | Repayment structure of this mortgage. |
+| `propertyAddress` | [`Address`](./common/Address) | Yes | — | Address of the mortgaged property. |
+| `statementDate` | `string` | Yes | — | ISO 8601 date the statement was generated. |
+| `periodStartDate` | `string` | Yes | — | ISO 8601 start date of the statement period. |
+| `periodEndDate` | `string` | Yes | — | ISO 8601 end date of the statement period. |
+| `originalMortgageAmount` | [`Money`](./common/Money) | Yes | — | Original mortgage advance amount. |
+| `outstandingBalance` | [`Money`](./common/Money) | Yes | — | Outstanding mortgage balance at end of statement period. |
+| `currentInterestRatePercent` | `string` | Yes | — | Current annual interest rate as a decimal string. |
+| `interestRateType` | [`InterestRateType`](./common/enums/InterestRateType) | Yes | — | Structure of the current interest rate. |
+| `rateReviewDate` | `string` _(optional)_ | No | `null` | ISO 8601 date when the current rate period ends and the rate may change. |
+| `svr` | `string` _(optional)_ | No | `null` | Standard Variable Rate the mortgage will revert to after the deal period, as a decimal string. |
+| `monthlyPaymentAmount` | [`Money`](./common/Money) | Yes | — | Current monthly payment amount. |
+| `nextPaymentDate` | `string` | Yes | — | ISO 8601 date of the next scheduled payment. |
+| `remainingTermMonths` | `int` | Yes | — | Number of months remaining on the mortgage term. |
+| `totalPaidThisPeriod` | [`Money`](./common/Money) | Yes | — | Total amount paid during the statement period. |
+| `capitalRepaidThisPeriod` | [`Money`](./common/Money) | Yes | — | Capital portion of payments made during the period. |
+| `interestChargedThisPeriod` | [`Money`](./common/Money) | Yes | — | Total interest charged during the statement period. |
+| `feesChargedThisPeriod` | [`Money`](./common/Money) _(optional)_ | No | `null` | Total fees charged during the period. |
+| `overpaymentAllowanceRemaining` | [`Money`](./common/Money) _(optional)_ | No | `null` | Remaining overpayment allowance for the current year without incurring early repayment charges. |
+| `overpaymentsMadeThisPeriod` | [`Money`](./common/Money) _(optional)_ | No | `null` | Total overpayments made during the period. |
+| `earlyRepaymentCharge` | [`Money`](./common/Money) _(optional)_ | No | `null` | Early repayment charge that would apply if the mortgage were redeemed today. |
+| `estimatedRedemptionFigure` | [`Money`](./common/Money) _(optional)_ | No | `null` | Estimated total amount required to fully redeem the mortgage today. |
+| `transactions` | array of `com.bank.schemas.payloads.statements.StatementTransaction` | No | `[]` | Payment transactions during the statement period. |
+| `correspondenceAddress` | [`Address`](./common/Address) _(optional)_ | No | `null` | Address for printed statement delivery. |
+
+## Referenced By
+
+| Schema | Namespace |
+|--------|-----------|
+| [CommunicationEvent](./events/CommunicationEvent) | `com.bank.schemas.events` |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

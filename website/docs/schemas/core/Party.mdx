@@ -1,0 +1,72 @@
+---
+id: com-bank-schemas-core-party
+title: Party
+description: "A party is any individual or organisation that has a relationship with the bank. Aligned with ISO 20022 PartyIdentification135 and UK Open Banking OBParty2. Inspired by Brazil Open Finance DadosCadastraisPF/PJ structures."
+tags: [Party, v1.0.0, Core Entities]
+---
+
+# Party
+
+| | |
+|---|---|
+| **Namespace** | `com.bank.schemas.core` |
+| **Type** | `record` |
+| **Version** | `1.0.0` |
+| **Compatibility** | `BACKWARD` |
+| **Status** | `ACTIVE` |
+| **Source** | [schemas/core/Party.avsc](https://github.com/samlarsen1/comms-docs-schemas/blob/main/schemas/core/Party.avsc) |
+
+A party is any individual or organisation that has a relationship with the bank. Aligned with ISO 20022 PartyIdentification135 and UK Open Banking OBParty2. Inspired by Brazil Open Finance DadosCadastraisPF/PJ structures.
+
+## Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `partyId` | `string` | Yes | — | Bank-assigned UUID uniquely identifying this party across all systems. |
+| `partyType` | [`PartyType`](./common/enums/PartyType) | Yes | — | Classification of the party as individual, organisation, etc. |
+| `status` | `PartyStatus` _(inline enum)_ | Yes | — | Current lifecycle status of the party. |
+| `individualDetails` | `IndividualDetails` _(inline record)_ _(optional)_ | No | `null` | Details for individual parties. Null for organisations. |
+| `organisationDetails` | `OrganisationDetails` _(inline record)_ _(optional)_ | No | `null` | Details for organisation parties. Null for individuals. |
+| `identifiers` | array of [`Identifier`](./common/Identifier) | No | `[]` | Formal identifiers for this party, e.g. NI number, passport, company number. |
+| `addresses` | array of [`Address`](./common/Address) | No | `[]` | Known addresses for this party. |
+| `contactDetails` | [`ContactDetails`](./common/ContactDetails) | Yes | — | Contact methods for this party. |
+| `createdAt` | `long` _(timestamp-millis, UTC ms)_ | Yes | — | UTC timestamp when this party record was created. |
+| `updatedAt` | `long` _(timestamp-millis, UTC ms)_ | Yes | — | UTC timestamp when this party record was last updated. |
+
+## Nested Types
+
+### IndividualDetails {#individualdetails}
+
+Details specific to a natural person. Present when partyType is INDIVIDUAL or SOLE_TRADER.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | `string` _(optional)_ | No | `null` | Title/salutation, e.g. 'Mr', 'Mrs', 'Dr', 'Prof'. |
+| `firstName` | `string` | Yes | — | Legal first/given name. |
+| `middleName` | `string` _(optional)_ | No | `null` | Middle name(s) or initials. |
+| `lastName` | `string` | Yes | — | Legal surname/family name. |
+| `preferredName` | `string` _(optional)_ | No | `null` | Preferred or informal name for communications. |
+| `dateOfBirth` | `string` | Yes | — | Date of birth in ISO 8601 format: YYYY-MM-DD. |
+| `nationality` | `string` _(optional)_ | No | `null` | ISO 3166-1 alpha-2 country code of primary nationality. |
+| `countryOfResidence` | `string` _(optional)_ | No | `null` | ISO 3166-1 alpha-2 country code of current residence. |
+| `maritalStatus` | `string` _(optional)_ | No | `null` | Marital status, e.g. 'SINGLE', 'MARRIED', 'CIVIL_PARTNERSHIP', 'DIVORCED', 'WIDOWED'. |
+
+### OrganisationDetails {#organisationdetails}
+
+Details specific to a legal entity or company. Present when partyType is ORGANISATION, PARTNERSHIP, TRUST, or CHARITY.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `legalName` | `string` | Yes | — | Full registered legal name of the organisation. |
+| `tradingName` | `string` _(optional)_ | No | `null` | Trading or operating name if different from legal name. |
+| `registrationNumber` | `string` _(optional)_ | No | `null` | Company registration number, e.g. Companies House number. |
+| `dateOfIncorporation` | `string` _(optional)_ | No | `null` | ISO 8601 date of incorporation or establishment: YYYY-MM-DD. |
+| `countryOfIncorporation` | `string` _(optional)_ | No | `null` | ISO 3166-1 alpha-2 country code where incorporated. |
+| `sic` | `string` _(optional)_ | No | `null` | Standard Industrial Classification (SIC) code. |
+| `lei` | `string` _(optional)_ | No | `null` | Legal Entity Identifier (LEI) - 20 character ISO 17442 code. |
+
+## Changelog
+
+| Version | Date | Type | Breaking | Changes |
+|---------|------|------|----------|---------|
+| `1.0.0` | 2026-03-01 | INITIAL | No | Initial schema definition |

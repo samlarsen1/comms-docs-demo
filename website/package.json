@@ -12,7 +12,8 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "gen:api": "docusaurus gen-api-docs all"
+    "gen:api": "docusaurus gen-api-docs all",
+    "gen:schemas": "node ../../comms-docs-schemas/scripts/generate-schema-docs.mjs"
   },
   "dependencies": {
     "@docusaurus/core": "^3.9.2",
